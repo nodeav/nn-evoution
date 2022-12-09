@@ -15,13 +15,15 @@ NeuralNet buildNet(int inputRows, int inputCols, int outputRows, int outputCols)
     auto fc3 = new FCLayer(96, 80);
     auto fc4 = new FCLayer(80, 64);
     auto fc5 = new FCLayer(64, 32);
-    auto fc6 = new FCLayer(32, outputSz);
+    auto fc6 = new FCLayer(32, outputRows, true);
+    auto fc7 = new FCLayer(1, outputCols, true);
     auto tha1 = new THALayer();
     auto tha2 = new THALayer();
     auto tha3 = new THALayer();
     auto tha4 = new THALayer();
     auto tha5 = new THALayer();
     auto tha6 = new THALayer();
+    auto tha7 = new THALayer();
     nn.addLayer(fc1);
     nn.addLayer(tha1);
     nn.addLayer(fc2);
@@ -34,6 +36,8 @@ NeuralNet buildNet(int inputRows, int inputCols, int outputRows, int outputCols)
     nn.addLayer(tha5);
     nn.addLayer(fc6);
     nn.addLayer(tha6);
+    nn.addLayer(fc7);
+    nn.addLayer(tha7);
     return nn;
 }
 
@@ -45,7 +49,7 @@ int main(int argc, char *argv[]) {
     auto dataSet = mnist(argv[1]);
     auto nn = buildNet(28, 28, 1, 10);
     std::cout << "Now training the nn..." << std::endl;
-    auto epochs = 2000;
+    auto epochs = 500;
     auto perEpoch = 7500;
     auto bestLoss = 100.f;
 

@@ -5,14 +5,17 @@
 #include "Layer.h"
 
 class FCLayer : public Layer {
+    bool transpose;
 public:
     Eigen::MatrixXf weights;
     Eigen::MatrixXf bias;
-public:
-    FCLayer(std::size_t inputSize, std::size_t outputSize);
+
+    FCLayer(std::size_t inputSize, std::size_t outputSize, bool transpose = false);
+
     ~FCLayer() override = default;
+
     // Move assignment operator
-    FCLayer& operator=(FCLayer&& other) noexcept = default;
+    FCLayer &operator=(FCLayer &&other) noexcept = default;
 
     Eigen::MatrixXf forward(Eigen::MatrixXf input) override;
 
