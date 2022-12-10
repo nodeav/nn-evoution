@@ -8,8 +8,8 @@ class Layer {
 public:
     virtual ~Layer() = default;
 
-    std::size_t inputSize{};
-    std::size_t outputSize{};
+    Eigen::Vector2i inputSize;
+    Eigen::Vector2i outputSize;
 
     Eigen::MatrixXf lastInput;
 

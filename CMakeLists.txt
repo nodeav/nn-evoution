@@ -15,7 +15,7 @@ find_package(Eigen3 REQUIRED)
 include_directories(.)
 
 # add the library target
-add_library(${LIBRARY_TARGET} SHARED FCLayer.cpp NeuralNet.cpp THALayer.cpp THALayer.h)
+add_library(${LIBRARY_TARGET} SHARED FCLayer.cpp NeuralNet.cpp THALayer.cpp THALayer.h mnist/FlattenLayer.cpp mnist/FlattenLayer.h)
 
 # link the library target to the OpenBLAS and Eigen libraries
 target_link_libraries(${LIBRARY_TARGET} OpenBLAS::OpenBLAS Eigen3::Eigen)

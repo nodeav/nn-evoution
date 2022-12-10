@@ -5,12 +5,13 @@
 #include "Layer.h"
 
 class FCLayer : public Layer {
-    bool transpose;
 public:
     Eigen::MatrixXf weights;
     Eigen::MatrixXf bias;
 
-    FCLayer(std::size_t inputSize, std::size_t outputSize, bool transpose = false);
+    FCLayer(std::size_t inputCols, std::size_t outputCols);
+
+    FCLayer(Eigen::Vector2i inputSize, int outputCols);
 
     ~FCLayer() override = default;
 

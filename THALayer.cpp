@@ -12,6 +12,6 @@ Eigen::MatrixXf THALayer::backward(Eigen::MatrixXf error, float learningRate) {
 }
 
 THALayer::THALayer() {
-    this->inputSize = -1;
-    this->outputSize = -1;
+    this->inputSize = {-1, -1};
+    this->outputSize = {-1, -1};
 }

@@ -69,8 +69,7 @@ std::vector<MatrixXf> mnist::imgFile::toMatrices() {
             }
         }
         asMat.normalize();
-        auto newMat = asMat.reshaped(1, header.cols * header.rows); // todo: get rid of this?
-        ret.emplace_back(newMat);
+        ret.emplace_back(asMat);
     }
     return ret;
 }
