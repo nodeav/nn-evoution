@@ -13,6 +13,8 @@ public:
 
     Eigen::MatrixXf predict(const Eigen::MatrixXf &input);
 
+    Eigen::MatrixXf predict(const Eigen::MatrixXf &input, std::function<void(const Eigen::MatrixXf)> outputCb);
+
     float loss(const Eigen::MatrixXf &gt, const Eigen::MatrixXf &prediction);
 
     Eigen::MatrixXf lossPrime(const Eigen::MatrixXf &gt, const Eigen::MatrixXf &prediction);
@@ -21,6 +23,7 @@ public:
                 float learningRate = 0.1);
 
     Eigen::MatrixXf backProp(const Eigen::MatrixXf &error, float learningRate);
+
 };
 
 

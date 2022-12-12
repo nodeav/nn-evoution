@@ -2,17 +2,24 @@
 #include "NeuralNet.h"
 #include <memory>
 
-void NeuralNet::addLayer(Layer* layer) {
+void NeuralNet::addLayer(Layer *layer) {
 //    if (!layers.empty()) {
 //        assert(layer.inputSize == layers[layers.size() - 1]->outputSize);
 //    }
     layers.emplace_back(layer);
 }
 
-Eigen::MatrixXf NeuralNet::predict(const Eigen::MatrixXf& input) {
+Eigen::MatrixXf NeuralNet::predict(const Eigen::MatrixXf &input) {
+    auto x = [](Eigen::MatrixXf x) {};
+    return predict(input, x);
+}
+
+Eigen::MatrixXf NeuralNet::predict(const Eigen::MatrixXf &input, std::function<void(const Eigen::MatrixXf)> outputCb) {
     assert(!layers.empty());
     Eigen::MatrixXf output = input;
+    outputCb(output);
     for (const auto &layer: layers) {
+        outputCb(output);
         output = layer->forward(output);
     }
     return output;
@@ -37,7 +44,8 @@ Eigen::MatrixXf NeuralNet::lossPrime(const Eigen::MatrixXf &gt, const Eigen::Mat
     return (prediction - gt) * 2 / gt.size();
 }
 
-float NeuralNet::train(std::vector<Eigen::MatrixXf> inputs, std::vector<Eigen::MatrixXf> truths, int epochs, float learningRate) {
+float NeuralNet::train(std::vector<Eigen::MatrixXf> inputs, std::vector<Eigen::MatrixXf> truths, int epochs,
+                       float learningRate) {
     float epochErr = 0;
     for (auto epoch = 0; epoch < epochs; epoch++) {
         for (auto i = 0; i < inputs.size(); i++) {

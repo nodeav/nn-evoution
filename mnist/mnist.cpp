@@ -61,9 +61,9 @@ std::vector<MatrixXf> mnist::imgFile::toMatrices() {
     auto pxPerImg = pixelsPerImage();
     for (int i = 0; i < totalPx; i += pxPerImg) {
         MatrixXf asMat(header.rows, header.cols);
-        for (int row = 0; row < header.rows; row++) {
-            for (int col = 0; col < header.cols; col++) {
-                auto loc = i + row * header.cols + col;
+        for (int col = 0; col < header.rows; col++) {
+            for (int row = 0; row < header.cols; row++) {
+                auto loc = i + col * header.cols + row;
                 const auto &pixel = pixels[loc];
                 asMat(row, col) = static_cast<float>(pixel);
             }
