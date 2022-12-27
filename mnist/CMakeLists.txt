@@ -1,4 +1,4 @@
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -mcpu=native -flto")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto")
 
 add_executable(mnist main_mnist.cpp mnist.cpp)
 

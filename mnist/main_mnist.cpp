@@ -42,6 +42,7 @@ NeuralNet buildNet(int inputRows, int inputCols, int outputCols) {
 }
 
 int i = 0;
+#ifdef OPENCV
 
 void showOutputCb(const Eigen::MatrixXf &netOutput) {
     i %= 8;
@@ -54,7 +55,6 @@ void showOutputCb(const Eigen::MatrixXf &netOutput) {
     i++;
 }
 
-#ifdef OPENCV
 
 void drawLines(cv::Mat &mat) {
     for (auto i = 1; i < 10; i++) {
