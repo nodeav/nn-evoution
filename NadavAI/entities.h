@@ -4,20 +4,22 @@
 #include <stdint.h>
 #include <string>
 
+typedef float loc_t;
 
 class Location {
-    uint64_t x;
-    uint64_t y;
+    loc_t x;
+    loc_t y;
 public:
-    Location(uint64_t x, uint64_t y);
+    Location(loc_t x, loc_t y);
     std::string toString() const;
 };
 
 class Entity {
 public:
-    Entity(uint64_t x, uint64_t y);
+    Entity(loc_t x, loc_t y);
     std::string toString() const;
-
+    float speed;
+    float angle;
 
 private:
     Location loc;

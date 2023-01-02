@@ -5,6 +5,19 @@
 
 #include "board.h"
 
+/* Rules :
+- entity can eat to its angle, in an ROI.
+- as an MVP, entities should be approximately round.
+- an entity can be eaten if its center is in a predetor's ROI.
+- grid is continuous
+-
+
+
+
+
+
+*/
+
 int main(int argc, char** argv) {
 
 
@@ -19,13 +32,12 @@ int main(int argc, char** argv) {
 
     std::random_device r;
 
-    // Choose a random mean between 1 and 6
     std::default_random_engine e1(r());
-    std::uniform_int_distribution<int> uniform_dist(0, 7);
+    std::uniform_real_distribution<loc_t> uniform_dist(0, 8);
 
     for(int i = 0; i < entities_size; i++) {
-        int x = uniform_dist(e1);
-        int y = uniform_dist(e1);
+        loc_t x = uniform_dist(e1);
+        loc_t y = uniform_dist(e1);
         board.AddEntity(std::make_shared<Entity>(x, y));
     }
 

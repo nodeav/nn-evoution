@@ -1,12 +1,12 @@
 #include "entities.h"
 
 
-Location::Location(uint64_t x, uint64_t y) : x(x), y(y)
+Location::Location(loc_t x, loc_t y) : x(x), y(y)
 { }
 
 
 
-Entity::Entity(uint64_t x, uint64_t y) : loc(x, y) {
+Entity::Entity(loc_t x, loc_t y) : loc(x, y) {
 }
 
 std::string Location::toString() const {
