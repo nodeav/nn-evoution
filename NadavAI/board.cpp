@@ -14,7 +14,7 @@ void Board::AddEntity(EntityPtr entity) {
 }
 
 void Board::print() const {
-    for (const auto entity: entities) {
+    for (const auto &entity: entities) {
         std::cout << entity->toString() << std::endl;
     }
 }

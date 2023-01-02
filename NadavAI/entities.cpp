@@ -1,12 +1,14 @@
 #include "entities.h"
 
-
-Location::Location(loc_t x, loc_t y) : x(x), y(y)
-{ }
+#include <cmath>
 
 
+Location::Location(loc_t x, loc_t y)
+: x(x), y(y) { }
 
-Entity::Entity(loc_t x, loc_t y) : loc(x, y) {
+
+
+Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle) : loc(x, y), speed(speed), angle(angle) {
 }
 
 std::string Location::toString() const {
@@ -15,4 +17,13 @@ std::string Location::toString() const {
 
 std::string Entity::toString() const {
     return loc.toString();
+}
+
+Location Entity::move() {
+    loc_t delta_x = angle.cosine() * speed;
+    loc_t delta_y = angle.sine() * speed;
+
+    loc += {delta_x, delta_y};
+
+    return loc;
 }
