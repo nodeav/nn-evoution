@@ -1,4 +1,5 @@
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto -Wall -pedantic")
+set(CMAKE_CXX_FLAGS "-Wall -pedantic")
 
 set(EXEC_NAME "NadavAI")
 set(LIB_NAME "naiLib")
