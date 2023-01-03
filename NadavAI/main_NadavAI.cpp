@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
         speed_t speed = speed_dist(e1);
         Radian radian = radian_dist(e1);
 
-        board.AddEntity(std::make_shared<Entity>(x, y, speed, radian));
+        board.AddEntity(std::make_shared<Entity>(x, y, speed, radian, 2));
     }
 
     board.print();
