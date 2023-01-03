@@ -2,13 +2,22 @@
 
 #include <cmath>
 
-struct Radian {
+class Radian {
+#define RADIAN "\u00b0";
+private:
     float value;
 
-    Radian(float value)
-    : value(std::fmod(value, 2.0 * M_PI)) {}
+public:
+    Radian(float value) : value(value) {
+        assert(value <= 2.0 * M_PI);
+    }
 
-    float toDegrees() {
+    std::string to_string() const {
+        return std::to_string(value) + RADIAN;
+    }
+
+
+    float toDegrees() const {
         return value * 180.0 / M_PI;
     }
 

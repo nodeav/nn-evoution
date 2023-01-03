@@ -3,20 +3,17 @@
 #include <cmath>
 
 
-Location::Location(loc_t x, loc_t y)
-: x(x), y(y) { }
+/*** Entity ***/
 
-
-
-Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle) : loc(x, y), speed(speed), angle(angle) {
-}
-
-std::string Location::toString() const {
-    return std::string("{") + std::to_string(x) + ", " + std::to_string(y) + "}";
-}
+Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle) :
+loc(x, y), speed(speed), angle(angle) { }
 
 std::string Entity::toString() const {
-    return loc.toString();
+    return std::string("{") +
+                      loc.toString() +
+                      ", speed: " + std::to_string(speed) +
+                      ", angle: " + angle.to_string() +
+                      "}";
 }
 
 Location Entity::move() {
@@ -27,3 +24,15 @@ Location Entity::move() {
 
     return loc;
 }
+
+
+/*** Location ***/
+
+std::string Location::toString() const {
+    return std::string("[") + std::to_string(x) + ", " + std::to_string(y) + "]";
+}
+
+
+Location::Location(loc_t x, loc_t y)
+: x(x), y(y) { }
+
