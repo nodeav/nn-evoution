@@ -11,22 +11,22 @@
 - an entity can be eaten if its center is in a predetor's ROI.
 - grid is continuous and has no borders
 
-
-
-
-
 */
+
+using std::cout;
+using std::endl;
 
 int main(int argc, char** argv) {
 
 
-    if (argc < 2) {
-        std::cout << "USAGE: " << argv[0] << " <num_entities>" << std::endl;
+    if (argc < 3) {
+        cout << "USAGE: " << argv[0] << " <num_entities> <num_frames>" << endl;
         return 1;
     }
 
     Board board(8, 8);
     uint32_t entities_size = std::stoi(argv[1]);
+    uint64_t frames_size = std::stoi(argv[2]);
 
     std::random_device r;
 
@@ -45,7 +45,16 @@ int main(int argc, char** argv) {
         board.AddEntity(std::make_shared<Entity>(x, y, speed, radian, 2));
     }
 
+    cout << "Start:" << endl;
     board.print();
+
+    for(int i = 0; i < frames_size; ++i) {
+        board.moveAllEntities();
+
+        cout << "After Move:" << endl;
+        board.print();
+    }
+
     return 0;
 
 }

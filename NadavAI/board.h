@@ -19,5 +19,5 @@ public:
     Board(uint32_t row, uint32_t col);
     void AddEntity(EntityPtr entity);
     void print() const;
-
+    void moveAllEntities();
 };

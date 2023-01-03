@@ -18,3 +18,9 @@ void Board::print() const {
         std::cout << entity->to_string() << std::endl;
     }
 }
+
+void Board::moveAllEntities() {
+    for (uint64_t i = 0; i < entities.size(); ++i) {
+        entities[i]->move();
+    }
+}
