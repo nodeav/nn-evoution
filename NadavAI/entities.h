@@ -13,7 +13,7 @@ class Location {
     loc_t y;
 public:
     Location(loc_t x, loc_t y);
-    std::string to_string() const;
+    std::string toString() const;
     Location operator+(const Location& other) {
         x += other.x;
         y += other.y;
@@ -29,7 +29,7 @@ public:
 class Size {
 #define DIAMETER "\u2300";
 public:
-    std::string to_string() const;
+    std::string toString() const;
     Size(float size);
 
 private:
@@ -46,7 +46,7 @@ private:
 
 public:
     Entity(loc_t x, loc_t y, speed_t speed, Radian angle, Size size);
-    std::string to_string() const;
+    std::string toString() const;
 
     Location move();
 

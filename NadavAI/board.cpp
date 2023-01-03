@@ -9,13 +9,13 @@ Board::Board(uint32_t row, uint32_t col) {
     this->cols = col;
 }
 
-void Board::AddEntity(EntityPtr entity) {
+void Board::addEntity(EntityPtr entity) {
     entities.emplace_back(entity);
 }
 
 void Board::print() const {
     for (const auto &entity: entities) {
-        std::cout << entity->to_string() << std::endl;
+        std::cout << entity->toString() << std::endl;
     }
 }
 

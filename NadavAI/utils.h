@@ -12,10 +12,9 @@ public:
         assert(value <= 2.0 * M_PI);
     }
 
-    std::string to_string() const {
+    std::string toString() const {
         return std::to_string(value) + RADIAN;
     }
-
 
     float toDegrees() const {
         return value * 180.0 / M_PI;

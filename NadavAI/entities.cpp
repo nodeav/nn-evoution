@@ -8,12 +8,12 @@
 Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, Size size) :
 loc(x, y), speed(speed), angle(angle), size(size) { }
 
-std::string Entity::to_string() const {
+std::string Entity::toString() const {
     return std::string("{") +
-                      loc.to_string() +
+                      loc.toString() +
                       ", speed: " + std::to_string(speed) +
-                      ", angle: " + angle.to_string() +
-                      ", diameter: " + size.to_string() +
+                      ", angle: " + angle.toString() +
+                      ", diameter: " + size.toString() +
                       "}";
 }
 
@@ -29,7 +29,7 @@ Location Entity::move() {
 
 /*** Location ***/
 
-std::string Location::to_string() const {
+std::string Location::toString() const {
     return std::string("[") + std::to_string(x) + ", " + std::to_string(y) + "]";
 }
 
@@ -42,7 +42,7 @@ Location::Location(loc_t x, loc_t y)
 
 Size::Size(float size) : diameter(size) {}
 
-std::string Size::to_string() const {
+std::string Size::toString() const {
     return std::to_string(diameter) + DIAMETER;
 
 }
