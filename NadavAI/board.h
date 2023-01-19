@@ -19,6 +19,6 @@ public:
     Board(float row, float col);
     void addEntity(EntityPtr entity);
     void print() const;
-    void move(EntityPtr ent);
     void moveAll();
+    void oneRayOfEntity(EntityPtr entity);
 };

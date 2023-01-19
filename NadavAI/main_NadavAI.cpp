@@ -7,8 +7,7 @@
 #include "board.h"
 
 /* TODO:
-1. movement on the board
-2. ray of entity
+ray of entity
 */
 
 /* Rules :
@@ -56,7 +55,7 @@ int main(int argc, char** argv) {
         speed_t speed = speed_dist(e1);
         Radian radian = radian_dist(e1);
 
-        board.addEntity(std::make_shared<Entity>(x, y, speed, radian, 2));
+        board.addEntity(std::make_shared<Entity>(x, y, speed, radian, 2 /* radius */));
     }
 
     cout << "Start:" << endl;

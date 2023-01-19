@@ -20,6 +20,10 @@ public:
         return value * 180.0 / M_PI;
     }
 
+    float toRadian() const {
+        return value;
+    }
+
     Radian operator+(const Radian &other) {
         return Radian{value + other.value};
     }
