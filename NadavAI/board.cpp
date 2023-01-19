@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-Board::Board(uint32_t row, uint32_t col) {
+Board::Board(float row, float col) {
     this->rows = row;
     this->cols = col;
 }
@@ -19,8 +19,8 @@ void Board::print() const {
     }
 }
 
-void Board::moveAllEntities() {
+void Board::moveAll() {
     for (uint64_t i = 0; i < entities.size(); ++i) {
-        entities[i]->move();
+        entities[i]->moveInBoundries({cols, rows});
     }
 }

@@ -33,11 +33,11 @@ public:
         return Radian{value / factor};
     }
 
-    float cosine() {
+    float cosine() const {
         return cos(value);
     }
 
-    float sine() {
+    float sine() const {
         return sin(value);
     }
 };

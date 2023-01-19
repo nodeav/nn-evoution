@@ -12,12 +12,13 @@ typedef std::vector<EntityPtr> entityContainer;
 class Board {
     entityContainer entities;
 
-    uint32_t rows;
-    uint32_t cols;
+    float rows;
+    float cols;
 
 public:
-    Board(uint32_t row, uint32_t col);
+    Board(float row, float col);
     void addEntity(EntityPtr entity);
     void print() const;
-    void moveAllEntities();
+    void move(EntityPtr ent);
+    void moveAll();
 };

@@ -14,16 +14,10 @@ class Location {
 public:
     Location(loc_t x, loc_t y);
     std::string toString() const;
-    Location operator+(const Location& other) {
-        x += other.x;
-        y += other.y;
-
-        return *this;
-    }
-
-    Location operator+=(const Location& other) {
-        return *this + other;
-    }
+    Location operator+(const Location& other) const;
+    Location operator%(const Location& other) const;
+    Location operator%=(const Location& other);
+    Location operator+=(const Location& other);
 };
 
 class Size {
@@ -48,7 +42,7 @@ public:
     Entity(loc_t x, loc_t y, speed_t speed, Radian angle, Size size);
     std::string toString() const;
 
-    Location move();
+    Location moveInBoundries(Location boundry);
 
 
 

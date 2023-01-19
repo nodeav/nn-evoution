@@ -6,6 +6,11 @@
 
 #include "board.h"
 
+/* TODO:
+1. movement on the board
+2. ray of entity
+*/
+
 /* Rules :
 - entity can eat to its angle, in an ROI.
 - as an MVP, entities should be approximately round.
@@ -58,7 +63,7 @@ int main(int argc, char** argv) {
     board.print();
 
     for(uint64_t i = 0; i < frames_size; ++i) {
-        board.moveAllEntities();
+        board.moveAll();
 
         cout << "After Move:" << endl;
         board.print();
