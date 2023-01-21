@@ -18,6 +18,9 @@ public:
     Location(loc_t x, loc_t y);
     std::string toString() const;
     Location operator+(const Location& other) const;
+    bool operator<(const Location& other) const;
+    bool operator>(const Location& other) const;
+    bool operator==(const Location& other) const;
     Location operator%(const Location& other) const;
     Location operator%=(const Location& other);
     Location operator+=(const Location& other);
@@ -32,6 +35,7 @@ private:
     Radian angle_;
     radius_t radius;
     distance_t distance_ = 5;
+    Radian fieldOfView_;
 
 public:
     Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius);
@@ -41,6 +45,7 @@ public:
     distance_t distance() const { return distance_; }
     Radian angle() const { return angle_; }
     Location location() const { return loc; }
+    Radian fieldOfView() const { return fieldOfView(); }
 
 };
 

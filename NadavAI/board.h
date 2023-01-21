@@ -20,5 +20,5 @@ public:
     void addEntity(EntityPtr entity);
     void print() const;
     void moveAll();
-    void oneRayOfEntity(EntityPtr entity);
+    void getEntitiesInFov(EntityPtr entity);
 };

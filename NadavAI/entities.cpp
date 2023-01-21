@@ -6,15 +6,15 @@
 /*** Entity ***/
 
 Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius) :
-loc(x, y), speed(speed), angle_(angle), radius(radius) { }
+        loc(x, y), speed(speed), angle_(angle), radius(radius) {}
 
 std::string Entity::toString() const {
     return std::string("{") +
-                      loc.toString() +
-                      ", speed: " + std::to_string(speed) +
-                      ", angle: " + angle_.toString() +
-                      ", radius: " + std::to_string(radius) +
-                      "}";
+           loc.toString() +
+           ", speed: " + std::to_string(speed) +
+           ", angle: " + angle_.toString() +
+           ", radius: " + std::to_string(radius) +
+           "}";
 }
 
 Location Entity::moveInBoundries(Location boundry) {
@@ -34,21 +34,33 @@ std::string Location::toString() const {
 }
 
 Location::Location(loc_t x, loc_t y)
-: x_(x), y_(y) { }
+        : x_(x), y_(y) {}
 
-Location Location::operator+(const Location& other) const {
-    return {x() + other.x() , y() + other.y()};
+Location Location::operator+(const Location &other) const {
+    return {x() + other.x(), y() + other.y()};
 }
 
-Location Location::operator%(const Location& other) const {
+bool Location::operator<(const Location &other) const {
+    return x_ < other.x_ && y_ < other.y_;
+}
+
+bool Location::operator>(const Location &other) const {
+    return x_ > other.x_ && y_ > other.y_;
+}
+
+bool Location::operator==(const Location &other) const {
+    return x_ == other.x_ && y_ == other.y_;
+}
+
+Location Location::operator%(const Location &other) const {
     return {std::fmod(x(), other.x()),
             std::fmod(y(), other.y())};
 }
 
-Location Location::operator%=(const Location& other) {
+Location Location::operator%=(const Location &other) {
     return *this % other;
 }
 
-Location Location::operator+=(const Location& other) {
+Location Location::operator+=(const Location &other) {
     return *this + other;
 }

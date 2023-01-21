@@ -35,20 +35,32 @@ static float getN(Location loc, slope_t m) {
     // y = mx + n
     // y - mx = n
     // n = y - mx
-    float n = (loc.y() - m * (loc.x()));
-    return n;
+    return loc.y() - m * loc.x();
 }
 
-void Board::oneRayOfEntity(EntityPtr entity) {
-    // 1) calculate m from angle
-    slope_t m = slope(entity->angle());
+Radian getAngle(Location loc1, Location loc2) {
+    if (loc1.x() == loc2.x()) {
+        return loc1.y() > loc2.y() ? 0 : M_PI;
+    }
+    return std::atan((loc2.y() - loc1.y()) / (loc2.x() - loc1.x()));
+}
 
-    // 2) calcualte n from x, y, m -> we now have a line equation-> A
-    float n = getN(entity->location(), m);
+void Board::getEntitiesInFov(EntityPtr entity) {
+    Radian fovPart = entity->fieldOfView() / 2;
+    Radian fov1 = entity->angle() + fovPart;
+    Radian fov2 = entity->angle() - fovPart;
 
+//    // 1) calculate m from angle
+//    slope_t m = slope(otherEntity->angle());
+//
+//    // 2) calcualte n from x, y, m -> we now have a line equation-> A
+//    float n = getN(otherEntity->location(), m);
 
-    // 3) calculate redbox from the line equation(A) + sight-range
+    for (const auto& otherEntity : entities) {
+        // TODO: check distance
+        Radian angle = getAngle(entity->location(), otherEntity->location());
 
+    }
 
 
     // 4) for each entity on the board

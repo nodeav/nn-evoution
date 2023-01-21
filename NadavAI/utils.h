@@ -8,9 +8,7 @@ private:
     float value;
 
 public:
-    Radian(float value) : value(value) {
-        assert(value <= 2.0 * M_PI);
-    }
+    Radian(float value) : value(fmod(value, 2.0 * M_PI)) {}
 
     std::string toString() const {
         return std::to_string(value) + RADIAN;
