@@ -22,25 +22,12 @@ void Board::print() const {
 }
 
 void Board::moveAll() {
-    for (uint64_t i = 0; i < entities.size(); ++i) {
-        entities[i]->moveInBoundries({cols, rows});
+    for (auto& entity : entities) {
+        entity->moveInBoundries({cols, rows});
     }
 }
 
-/* typedef float slope_t;
-
-static slope_t slope(Radian radian) {
-    return tan(radian.toRadian());
-}
-
-static float getN(Location loc, slope_t m) {
-    // y = mx + n
-    // y - mx = n
-    // n = y - mx
-    return loc.y() - m * loc.x();
-} */
-
-
+// TODO: return something
 void Board::getEntitiesInFov(EntityPtr entity) {
     Radian fovPart = entity->fieldOfView() / 2;
     Radian fovBelow = entity->angle() - fovPart;
@@ -49,7 +36,7 @@ void Board::getEntitiesInFov(EntityPtr entity) {
     typedef std::pair<EntityPtr, distance_t> entDist;
     std::unordered_map<Radian, entDist, RadianHasher> inSight;
 
-    for (auto otherEntity : entities) {
+    for (const auto& otherEntity: entities) {
         distance_t dist = getDistance(entity->location(), otherEntity->location());
         if (dist > entity->maxSightDistance()) {
             continue;

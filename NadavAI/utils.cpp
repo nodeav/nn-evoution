@@ -41,8 +41,6 @@ Location Location::operator+=(const Location &other) {
 }
 
 
-
-
 /****************/
 Radian getAngle(Location loc1, Location loc2) {
     if (loc1.x() == loc2.x()) {
@@ -53,6 +51,9 @@ Radian getAngle(Location loc1, Location loc2) {
 
 
 // distance_t, Loc.x and Loc.y must be real numbers for this to be exact
+// TODO micro-optimization: avoid sqrt, compare using dist^2
 distance_t getDistance(Location loc1, Location loc2) {
-    return sqrt(pow(loc2.x() - loc1.x(), 2) + pow(loc2.y() - loc1.y(), 2));
+    auto dx = loc2.x() - loc1.x();
+    auto dy = loc2.y() - loc1.y();
+    return sqrtf(dx * dx + dy * dy);
 }

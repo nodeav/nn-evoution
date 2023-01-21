@@ -6,69 +6,68 @@
 typedef float distance_t;
 
 class Radian {
-#define RADIAN "\u00b0";
 private:
-    float value;
+    float value_;
 
 public:
-    Radian(float value) : value(fmod(value, 2.0 * M_PI)) {}
+    Radian(float value) : value_(fmod(value, 2.0 * M_PI)) {}
     Radian() {}
 
     std::string toString() const {
-        return std::to_string(value) + RADIAN;
+        return std::to_string(value_) + " rad";
     }
 
     float toDegrees() const {
-        return value * 180.0 / M_PI;
+        return value_ * 180.0 / M_PI;
     }
 
     size_t toIntDegrees() const {
-        return (value * 180 / M_PI);
+        return (value_ * 180 / M_PI);
     }
 
-    float toRadian() const {
-        return value;
+    float value() const {
+        return value_;
     }
 
     Radian operator+(const Radian &other) const {
-        return Radian{value + other.value};
+        return Radian{value_ + other.value_};
     }
     Radian operator-(const Radian &other) const {
-        return Radian{value - other.value};
+        return Radian{value_ - other.value_};
     }
     Radian operator*(float factor) const {
-        return Radian{value * factor};
+        return Radian{value_ * factor};
     }
     Radian operator/(float factor) const {
-        return Radian{value / factor};
+        return Radian{value_ / factor};
     }
 
     bool operator<(const Radian& other) const {
-        return value < other.value;
+        return value_ < other.value_;
     }
 
     bool operator>(const Radian& other) const {
-        return value > other.value;
+        return value_ > other.value_;
     }
 
     bool operator<=(const Radian& other) const {
-        return value<= other.value;
+        return value_ <= other.value_;
     }
 
     bool operator >=(const Radian& other) const {
-        return value >= other.value;
+        return value_ >= other.value_;
     }
 
     bool operator ==(const Radian& other) const {
-        return value == other.value;
+        return value_ == other.value_;
     }
 
     float cosine() const {
-        return cos(value);
+        return cos(value_);
     }
 
     float sine() const {
-        return sin(value);
+        return sin(value_);
     }
 };
 
