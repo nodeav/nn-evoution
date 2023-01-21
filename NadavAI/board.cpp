@@ -2,6 +2,8 @@
 #include "board.h"
 
 #include <iostream>
+#include <unordered_map>
+#include "utils.h"
 
 
 Board::Board(float row, float col) {
@@ -25,7 +27,7 @@ void Board::moveAll() {
     }
 }
 
-typedef float slope_t;
+/* typedef float slope_t;
 
 static slope_t slope(Radian radian) {
     return tan(radian.toRadian());
@@ -36,41 +38,40 @@ static float getN(Location loc, slope_t m) {
     // y - mx = n
     // n = y - mx
     return loc.y() - m * loc.x();
-}
+} */
 
-Radian getAngle(Location loc1, Location loc2) {
-    if (loc1.x() == loc2.x()) {
-        return loc1.y() > loc2.y() ? 0 : M_PI;
-    }
-    return std::atan((loc2.y() - loc1.y()) / (loc2.x() - loc1.x()));
-}
 
 void Board::getEntitiesInFov(EntityPtr entity) {
     Radian fovPart = entity->fieldOfView() / 2;
-    Radian fov1 = entity->angle() + fovPart;
-    Radian fov2 = entity->angle() - fovPart;
+    Radian fovBelow = entity->angle() - fovPart;
+    Radian fovAbove = entity->angle() + fovPart;
 
-//    // 1) calculate m from angle
-//    slope_t m = slope(otherEntity->angle());
-//
-//    // 2) calcualte n from x, y, m -> we now have a line equation-> A
-//    float n = getN(otherEntity->location(), m);
+    typedef std::pair<EntityPtr, distance_t> entDist;
+    std::unordered_map<Radian, entDist, RadianHasher> inSight;
 
-    for (const auto& otherEntity : entities) {
-        // TODO: check distance
+    for (auto otherEntity : entities) {
+        distance_t dist = getDistance(entity->location(), otherEntity->location());
+        if (dist > entity->maxSightDistance()) {
+            continue;
+        }
+
         Radian angle = getAngle(entity->location(), otherEntity->location());
 
+        // as first step, only exact same angle can block the sight
+        // in the next step, we can use the radius of the entity we see
+        // in the next-next step, perspective can be implemented
+
+        // TODO: handle overflowing the circle
+        if (angle <= fovAbove && angle >= fovBelow) {
+            auto sawEntity = inSight.find(angle);
+            if (sawEntity == inSight.end()) {
+                inSight.insert({angle, std::make_pair(otherEntity, dist)});
+            } else {
+                if (sawEntity->second.second > dist) {
+                    inSight[angle] = std::make_pair(otherEntity, dist);
+                }
+            }
+
+        }
     }
-
-
-    // 4) for each entity on the board
-    //        only if inside redbox
-    //            calculate m' from the (A) + 90degrees
-    //            calculate the line equation(B) from x', y', m'
-    //            find cut of A and B -> x'', y''.
-    //            calculate distance between x', y' and (x'', y'')
-    //            if (distance < entity.radius) {
-    //                 entity is in sight
-    //                 keep x'', y'' for later
-    // 5) get the entity with shortest distance from x, y to x'', y''
 }
