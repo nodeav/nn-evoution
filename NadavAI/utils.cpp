@@ -44,7 +44,7 @@ Location Location::operator+=(const Location &other) {
 /****************/
 Radian getAngle(Location loc1, Location loc2) {
     if (loc1.x() == loc2.x()) {
-        return loc1.y() > loc2.y() ? 0 : M_PI;
+        return loc1.y() >= loc2.y() ? 0 : M_PI;
     }
     return std::atan((loc2.y() - loc1.y()) / (loc2.x() - loc1.x()));
 }
