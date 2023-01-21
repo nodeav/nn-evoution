@@ -30,11 +30,14 @@ void Board::moveAll() {
 // TODO: return something
 void Board::getEntitiesInFov(EntityPtr entity) {
     Radian fovPart = entity->fieldOfView() / 2;
-    Radian fovBelow = entity->angle() - fovPart;
-    Radian fovAbove = entity->angle() + fovPart;
+    Radian fovStart = entity->angle() - fovPart;
+    Radian fovEnd = entity->angle() + fovPart;
 
-    typedef std::pair<EntityPtr, distance_t> entDist;
-    std::unordered_map<Radian, entDist, RadianHasher> inSight;
+    struct entDist {
+        EntityPtr entity;
+        distance_t distance;
+    };
+    std::unordered_map<Radian, entDist, Radian::Hasher> inSight;
 
     for (const auto& otherEntity: entities) {
         distance_t dist = getDistance(entity->location(), otherEntity->location());
@@ -48,17 +51,13 @@ void Board::getEntitiesInFov(EntityPtr entity) {
         // in the next step, we can use the radius of the entity we see
         // in the next-next step, perspective can be implemented
 
-        // TODO: handle overflowing the circle
-        if (angle <= fovAbove && angle >= fovBelow) {
-            auto sawEntity = inSight.find(angle);
-            if (sawEntity == inSight.end()) {
-                inSight.insert({angle, std::make_pair(otherEntity, dist)});
-            } else {
-                if (sawEntity->second.second > dist) {
-                    inSight[angle] = std::make_pair(otherEntity, dist);
-                }
-            }
+        if (!angle.between(fovStart, fovEnd)) {
+            continue;
+        }
 
+        auto sawEntity = inSight.find(angle);
+        if (sawEntity == inSight.end() || dist < sawEntity->second.distance) {
+            inSight[angle] = {otherEntity, dist};
         }
     }
 }

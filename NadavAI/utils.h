@@ -13,6 +13,19 @@ public:
     Radian(float value) : value_(fmod(value, 2.0 * M_PI)) {}
     Radian() {}
 
+    using Hasher = decltype([](auto radian) -> size_t {
+        return std::hash<float>()(radian.value());
+    });
+
+    // TODO: unit-test this
+    bool between(Radian start, Radian end) const {
+        // assumes all angles are positive
+        if (end > start) {
+            return start <= *this && *this <= end;
+        }
+        return start <= *this || *this <= end;
+    }
+
     std::string toString() const {
         return std::to_string(value_) + " rad";
     }
@@ -68,14 +81,6 @@ public:
 
     float sine() const {
         return sin(value_);
-    }
-};
-
-// todo: improve this hash!
-class RadianHasher {
-public:
-    size_t operator()(Radian const& radian) const {
-        return (radian.toIntDegrees());
     }
 };
 
