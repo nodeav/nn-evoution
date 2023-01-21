@@ -24,6 +24,7 @@ void Board::print() const {
 void Board::moveAll() {
     for (auto& entity : entities) {
         entity->moveInBoundries({cols, rows});
+        getEntitiesInFov(entity);
     }
 }
 
@@ -60,4 +61,11 @@ void Board::getEntitiesInFov(EntityPtr entity) {
             inSight[angle] = {otherEntity, dist};
         }
     }
+
+    std::cout << "I'm entity " << entity->toString() << std::endl;
+    for (const auto& [angle, entityDist] : inSight) {
+        std::cout << "--> I see " << entityDist.entity->toString() << " at distance " << entityDist.distance << std::endl;
+    }
+    std::cout << std::endl;
+
 }
