@@ -12,6 +12,8 @@ typedef float radius_t;
 
 class Entity {
 private:
+    static int counter;
+    int idx = 0;
     Location loc;
     speed_t speed; // distance per frame? TBD
     Radian angle_;
@@ -29,7 +31,7 @@ public:
     Radian angle() const { return angle_; }
     Location location() const { return loc; }
     Radian fieldOfView() const { return fieldOfView_; }
-
+    bool operator==(const Entity& other) const { return idx == other.idx; };
 };
 
 class Toref : public Entity {
