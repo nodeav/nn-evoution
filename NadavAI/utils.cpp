@@ -33,11 +33,11 @@ Location Location::operator%(const Location &other) const {
 }
 
 Location Location::operator%=(const Location &other) {
-    return *this % other;
+    return *this = *this % other;
 }
 
 Location Location::operator+=(const Location &other) {
-    return *this + other;
+    return *this = *this + other;
 }
 
 

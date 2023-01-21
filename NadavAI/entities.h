@@ -23,7 +23,7 @@ public:
     Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size);
     std::string toString() const;
 
-    Location moveInBoundries(Location boundry);
+    void moveInBoundries(Location boundary);
     distance_t maxSightDistance() const { return maxSightDistance_; }
     // angle of an entity is considering that 0/2pie are the upper y axis, and pie/2 is the upper x axis
     Radian angle() const { return angle_; }

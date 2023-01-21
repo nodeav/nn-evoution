@@ -17,12 +17,10 @@ std::string Entity::toString() const {
            "}";
 }
 
-Location Entity::moveInBoundries(Location boundry) {
+void Entity::moveInBoundries(Location boundary) {
     loc_t delta_x = angle_.cosine() * speed;
     loc_t delta_y = angle_.sine() * speed;
 
     loc += {delta_x, delta_y};
-    loc %= boundry;
-
-    return loc;
+    loc %= boundary;
 }
