@@ -41,6 +41,9 @@ void Board::getEntitiesInFov(EntityPtr entity) {
     std::unordered_map<Radian, entDist, Radian::Hasher> inSight;
 
     for (const auto& otherEntity: entities) {
+        if (entity == otherEntity) {
+            continue;
+        }
         distance_t dist = getDistance(entity->location(), otherEntity->location());
         if (dist > entity->maxSightDistance()) {
             continue;
