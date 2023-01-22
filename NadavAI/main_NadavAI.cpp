@@ -6,10 +6,6 @@
 
 #include "board.h"
 
-/* TODO:
-ray of entity
-*/
-
 /* Rules :
 - entity can eat to its angle, in an ROI.
 - as an MVP, entities should be approximately round.

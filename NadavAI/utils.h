@@ -9,13 +9,17 @@ class Radian {
 private:
     float value_;
 
+    struct RadianHasher {
+      size_t operator()(auto radian) const {
+        return std::hash<float>()(radian.value());
+      }
+    };
+
 public:
     Radian(float value) : value_(fmod(value+2.0*M_PI, 2.0 * M_PI)) {}
     Radian() {}
 
-    using Hasher = decltype([](auto radian) -> size_t {
-        return std::hash<float>()(radian.value());
-    });
+    using Hasher = decltype(RadianHasher());
 
     // TODO: unit-test this
     bool between(Radian start, Radian end) const {
