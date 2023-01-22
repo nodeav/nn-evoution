@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     auto perEpoch = 6000;
     auto bestLoss = 100.f;
 
-    uint seed = rand();
+    unsigned int seed = rand();
     auto imgRng = std::mt19937{seed};
     auto labelRng = std::mt19937{seed};
 
