@@ -12,11 +12,10 @@ TEST(HelloTest, BasicAssertions) {
 }
 
 TEST(GetDistanceTest, sanity) {
-
   EXPECT_EQ(getDistance({0, 1}, {0, 2}), 1.0);
   EXPECT_EQ(getDistance({0, 0}, {3, 4}), 5.0);
-
-
 }
 
-
+TEST(GetAngleTest, sanity) {
+    EXPECT_EQ(getAngle({0, 1}, {0, 2}), Radian(M_PI));
+}

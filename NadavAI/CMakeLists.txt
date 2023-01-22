@@ -4,11 +4,6 @@ set(CMAKE_CXX_FLAGS "-Wall -pedantic")
 set(EXEC_NAME "NadavAI")
 set(NAI_LIB "naiLib")
 
-
-
-
-
-
 add_executable(${EXEC_NAME} main_${EXEC_NAME}.cpp)
 
 add_library(${NAI_LIB} entities.cpp
