@@ -8,6 +8,7 @@ typedef float distance_t;
 class Radian {
 private:
     float value_;
+    static constexpr float epsilon = 1e-4;
 
     struct RadianHasher {
       size_t operator()(auto radian) const {
@@ -68,15 +69,15 @@ public:
     }
 
     bool operator<=(const Radian& other) const {
-        return value_ <= other.value_;
+        return value_ < other.value_ || value_ == other.value_;
     }
 
     bool operator >=(const Radian& other) const {
-        return value_ >= other.value_;
+        return value_ > other.value_ || value_ == other.value_;
     }
 
     bool operator ==(const Radian& other) const {
-        return value_ == other.value_;
+        return abs(value_ - other.value_) <= epsilon;
     }
 
     float cosine() const {
