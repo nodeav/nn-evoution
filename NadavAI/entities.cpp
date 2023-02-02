@@ -8,7 +8,7 @@
 int Entity::counter = 0;
 
 Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius) :
-        idx(counter++), loc(x, y), speed(speed), angle_(angle), radius(radius) {}
+        loc(x, y), speed(speed), angle_(angle), radius(radius), idx(counter++) {}
 
 std::string Entity::toString() const {
     return std::string("{") +

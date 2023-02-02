@@ -54,14 +54,11 @@ int main(int argc, char** argv) {
         board.addEntity(std::make_shared<Entity>(x, y, speed, radian, 2 /* radius */));
     }
 
-    cout << "Start:" << endl;
-    board.print();
+//    cout << "Start:" << endl;
+//    board.print();
 
     for(uint64_t i = 0; i < frames_size; ++i) {
         board.moveAll();
-
-        cout << "After Move:" << endl;
-        board.print();
     }
 
     return 0;

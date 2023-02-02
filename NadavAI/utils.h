@@ -110,4 +110,5 @@ public:
 
 
 Radian getAngle(Location loc1, Location loc2);
+distance_t getDistanceSquared(Location loc1, Location loc2);
 distance_t getDistance(Location loc1, Location loc2);

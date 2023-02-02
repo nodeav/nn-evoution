@@ -2,6 +2,7 @@
 #include "board.h"
 
 #include <iostream>
+#include <vector>
 #include <unordered_map>
 #include "utils.h"
 
@@ -21,31 +22,38 @@ void Board::print() const {
     }
 }
 
+bool enablePrint = false;
+
 void Board::moveAll() {
     for (auto& entity : entities) {
         entity->moveInBoundries({cols, rows});
         getEntitiesInFov(entity);
+        if (enablePrint) {
+            for (const auto &entDist: getEntitiesInFov(entity)) {
+                std::cout << entity->idx << " sees " << entDist.entity->idx << " at a distance of " << entDist.distance
+                          << std::endl;
+            }
+        }
     }
 }
 
-// TODO: return something
-void Board::getEntitiesInFov(EntityPtr entity) {
+std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entity) {
     Radian fovPart = entity->fieldOfView() / 2;
     Radian fovStart = entity->angle() - fovPart;
     Radian fovEnd = entity->angle() + fovPart;
 
-    struct entDist {
-        EntityPtr entity;
-        distance_t distance;
-    };
-    std::unordered_map<Radian, entDist, Radian::Hasher> inSight;
+    std::vector<EntityDistanceResult> ret;
+
+    std::unordered_map<Radian, EntityDistanceResult, Radian::Hasher> inSight;
 
     for (const auto& otherEntity: entities) {
         if (entity == otherEntity) {
             continue;
         }
-        distance_t dist = getDistance(entity->location(), otherEntity->location());
-        if (dist > entity->maxSightDistance()) {
+
+        distance_t distSquared = getDistanceSquared(entity->location(), otherEntity->location());
+        auto maxDist = entity->maxSightDistance();
+        if (distSquared > (maxDist * maxDist)) {
             continue;
         }
 
@@ -60,15 +68,15 @@ void Board::getEntitiesInFov(EntityPtr entity) {
         }
 
         auto sawEntity = inSight.find(angle);
-        if (sawEntity == inSight.end() || dist < sawEntity->second.distance) {
-            inSight[angle] = {otherEntity, dist};
+        if (sawEntity == inSight.end() || distSquared < sawEntity->second.distance) {
+            inSight[angle] = {otherEntity, distSquared};
         }
     }
 
-    std::cout << "I'm entity " << entity->toString() << std::endl;
-    for (const auto& [angle, entityDist] : inSight) {
-        std::cout << "--> I see " << entityDist.entity->toString() << " at distance " << entityDist.distance << std::endl;
+    for (auto& [angle, entityDist] : inSight) {
+        entityDist.distance = sqrtf(entityDist.distance);
+        ret.emplace_back(entityDist);
     }
-    std::cout << std::endl;
+    return ret;
 
 }

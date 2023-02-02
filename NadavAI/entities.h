@@ -13,7 +13,6 @@ typedef float radius_t;
 class Entity {
 private:
     static int counter;
-    int idx = 0;
     Location loc;
     speed_t speed; // distance per frame? TBD
     Radian angle_;
@@ -22,6 +21,7 @@ private:
     Radian fieldOfView_ = 0.5;
 
 public:
+    int idx = 0;
     Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size);
     std::string toString() const;
 

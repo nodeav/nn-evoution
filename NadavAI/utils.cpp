@@ -50,11 +50,12 @@ Radian getAngle(Location loc1, Location loc2) {
     return std::atan((loc2.y() - loc1.y()) / (loc2.x() - loc1.x()));
 }
 
-
-// distance_t, Loc.x and Loc.y must be real numbers for this to be exact
-// TODO micro-optimization: avoid sqrt, compare using dist^2
-distance_t getDistance(Location loc1, Location loc2) {
+distance_t getDistanceSquared(Location loc1, Location loc2) {
     auto dx = loc2.x() - loc1.x();
     auto dy = loc2.y() - loc1.y();
-    return sqrtf(dx * dx + dy * dy);
+    return dx * dx + dy * dy;
+}
+
+distance_t getDistance(Location loc1, Location loc2) {
+    return std::sqrt(getDistanceSquared(loc1, loc2));
 }
