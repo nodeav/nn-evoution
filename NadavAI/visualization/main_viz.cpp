@@ -79,12 +79,12 @@ int main(int argc, char ** argv)
 
         // rendering
         // todo: remove magic nums
-        Uint32 sprite = frames % 3;
+        Sint32 sprite = frames % 3;
         // x, y, width, height
         // todo: remove magic nums
         SDL_Rect srcrect = { sprite * 48, 0, 48, 60 };
         SDL_Rect dstrect = { agent_1.pos_x, agent_1.pos_y, 96, 120 };
-        while (SDL_PollEvent(&event) != NULL)
+        while (SDL_PollEvent(&event))
         {
             switch (event.type)
             {
