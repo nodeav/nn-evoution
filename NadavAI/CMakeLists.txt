@@ -4,6 +4,8 @@ set(CMAKE_CXX_FLAGS "-Wall -pedantic")
 set(EXEC_NAME "NadavAI")
 set(NAI_LIB "naiLib")
 
+option(BOARD_VIS "visualize board" ON)
+
 add_executable(${EXEC_NAME} main_${EXEC_NAME}.cpp)
 
 add_library(${NAI_LIB} entities.cpp
@@ -30,3 +32,8 @@ add_executable(tests test.cpp)
 target_link_libraries(tests GTest::gtest_main ${NAI_LIB})
 include(GoogleTest)
 gtest_discover_tests(tests)
+
+if (${BOARD_VIS})
+    # find_package(OpenCV REQUIRED)
+    add_subdirectory(visualization)
+endif ()
