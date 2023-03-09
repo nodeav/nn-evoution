@@ -2,31 +2,49 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
+const int sprite_cycle_len = 3;
+const int sprite_size = 48;
+const int agent_size = 96;
 class Agent {
 
-// todo: include board and change vis to functions to be consumed from outside
-
 public:        
+        enum class Direction {right, left, up, down};
         int pos_x;
         int pos_y;
-        int direction;
+        Direction direction;
         int speed;
         int color;
 
     void move() {  
         switch (direction) {
-            // change to enum (enum classes maybe?)
-            case 0:
+            case Direction::right:
                 pos_x = pos_x + speed;
                 break;
-            case 1:
+            case Direction::left:
                 pos_x = pos_x - speed;
                 break;
-            case 2:
+            case Direction::up:
                 pos_y = pos_y + speed;
                 break;
-            case 3:
+            case Direction::down:
                 pos_y = pos_y - speed;
+                break;
+        }
+    }
+
+    int sprite_direction() {
+        switch (direction) {
+            case Direction::right:
+                return 96;
+                break;
+            case Direction::left:
+                return 48;
+                break;
+            case Direction::up:
+                return 0;
+                break;
+            case Direction::down:
+                return 144;
                 break;
         }
     }
@@ -55,7 +73,7 @@ int main(int argc, char ** argv)
     Agent agent_1;
     agent_1.pos_x = 500;
     agent_1.pos_y = 500;
-    agent_1.direction = 0;
+    agent_1.direction = Agent::Direction::right;
     agent_1.speed = 10;
     while (!quit)
     {
@@ -65,26 +83,27 @@ int main(int argc, char ** argv)
         Uint32 seconds = ticks / 1000;
         Uint32 frames = ticks / 100;
 
-        // change direction
+        // change direction every 3 seconds
         if (seconds - change_direction_counter == 3) {
             change_direction_counter = seconds;
-            agent_1.direction = rand() % 3;
+            agent_1.direction = static_cast<Agent::Direction>(rand() % 3);
+            // std::cout << agent_1.direction << std::endl;
         }
 
+        // move every frame
         if (frames > step) {
             step = frames;
-            // move
             agent_1.move();
         }
 
         // rendering
         // todo: remove magic nums
-        Sint32 sprite = frames % 3;
+        Sint32 sprite = frames % sprite_cycle_len;
         // x, y, width, height
         // todo: remove magic nums
-        SDL_Rect srcrect = { sprite * 48, 0, 48, 60 };
-        SDL_Rect dstrect = { agent_1.pos_x, agent_1.pos_y, 96, 120 };
-        while (SDL_PollEvent(&event))
+        SDL_Rect srcrect = { sprite * sprite_size, agent_1.sprite_direction(), sprite_size, sprite_size };
+        SDL_Rect dstrect = { agent_1.pos_x, agent_1.pos_y, agent_size, agent_size };
+        while (SDL_PollEvent(&event) != NULL)
         {
             switch (event.type)
             {
