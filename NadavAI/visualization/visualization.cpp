@@ -42,7 +42,7 @@ Visualizer::Visualizer() {
     IMG_Init(IMG_INIT_PNG);
 
     window = SDL_CreateWindow("SDL2 Sprite Sheets", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1000,
-                                          1000, 0);
+                              1000, 0);
 
     image = IMG_Load("./cats-fluffy.png");
     renderer = SDL_CreateRenderer(window, -1, 0);
@@ -53,7 +53,6 @@ Visualizer::Visualizer() {
     agent_1.direction = Agent::Direction::right;
     agent_1.speed = 10;
 
-    // TODO: maybe wrap?
     SDL_RenderClear(renderer);
 }
 
@@ -71,7 +70,6 @@ void Visualizer::startVizLoop() {
         if (seconds - change_direction_counter == 3) {
             change_direction_counter = seconds;
             agent_1.direction = static_cast<Agent::Direction>(rand() % 3);
-            // std::cout << agent_1.direction << std::endl;
         }
 
         // move every frame
@@ -83,7 +81,7 @@ void Visualizer::startVizLoop() {
         // rendering
         Sint32 sprite = frames % SPRITE_CYCLE_LEN;
         // x, y, width, height
-        // todo: remove magic nums
+
         SDL_Rect srcrect = {sprite * SPRITE_SIZE, agent_1.sprite_direction(), SPRITE_SIZE, SPRITE_SIZE};
         SDL_Rect dstrect = {agent_1.pos_x, agent_1.pos_y, AGENT_SIZE, AGENT_SIZE};
         while (SDL_PollEvent(&event) != 0) {
