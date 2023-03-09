@@ -25,5 +25,6 @@ public:
     void addEntity(EntityPtr entity);
     void print() const;
     void moveAll();
+    entityContainer getEntities() const { return entities; };
     std::vector<EntityDistanceResult> getEntitiesInFov(const EntityPtr& entity);
 };
