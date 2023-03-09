@@ -1,4 +1,5 @@
 #include "visualization.h"
+#include <stdexcept>
 
 void Agent::move() {
     switch (direction) {
@@ -30,8 +31,13 @@ int Agent::sprite_direction() const {
     }
 }
 
-Visualizer::Visualizer() {
+bool Visualizer::initialized = false;
 
+Visualizer::Visualizer() {
+    if (initialized) {
+        throw std::runtime_error("Only one instance of Visualizer is allowed");
+    }
+    initialized = true;
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
 

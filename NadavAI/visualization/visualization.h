@@ -34,6 +34,7 @@ class Visualizer {
     SDL_Texture *texture;
     Agent agent_1;
 
+    static bool initialized;
 
 public:
     Visualizer();
