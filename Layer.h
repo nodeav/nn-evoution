@@ -2,7 +2,7 @@
 #define NN_EVOLUTION_LAYER_H
 
 #include <cstddef>
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 class Layer {
 public:

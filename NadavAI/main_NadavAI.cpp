@@ -12,6 +12,18 @@
 - an entity can be eaten if its center is in a predetor's ROI.
 - grid is continuous and has no borders
 
+
+Up Next:
+1. choose move:
+    a. implement the net
+    b. connect it to input+output
+    c. choose move according to its output
+
+2. implement birth mechanism
+
+3. adjust smart evolution:
+    a. copying the net to child
+    b. add a mutation
 */
 
 using std::cout;

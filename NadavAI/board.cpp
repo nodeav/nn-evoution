@@ -26,14 +26,9 @@ bool enablePrint = false;
 
 void Board::moveAll() {
     for (auto& entity : entities) {
+        auto entitiesInFov = getEntitiesInFov(entity);
+        entity->acknowledgeEntities(entitiesInFov);
         entity->moveInBoundries({cols, rows});
-        getEntitiesInFov(entity);
-        if (enablePrint) {
-            for (const auto &entDist: getEntitiesInFov(entity)) {
-                std::cout << entity->idx << " sees " << entDist.entity->idx << " at a distance of " << entDist.distance
-                          << std::endl;
-            }
-        }
     }
 }
 
@@ -44,6 +39,7 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
 
     std::vector<EntityDistanceResult> ret;
 
+    // TODO: hash with something vaguer than float
     std::unordered_map<Radian, EntityDistanceResult, Radian::Hasher> inSight;
 
     for (const auto& otherEntity: entities) {
@@ -68,15 +64,14 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
         }
 
         auto sawEntity = inSight.find(angle);
-        if (sawEntity == inSight.end() || distSquared < sawEntity->second.distance) {
-            inSight[angle] = {otherEntity, distSquared};
+        if (sawEntity == inSight.end() || distSquared < sawEntity->second.distanceToEntity) {
+            inSight[angle] = {otherEntity->speed(), angle, distSquared};
         }
     }
 
     for (auto& [angle, entityDist] : inSight) {
-        entityDist.distance = sqrtf(entityDist.distance);
+        entityDist.distanceToEntity = sqrtf(entityDist.distanceToEntity);
         ret.emplace_back(entityDist);
     }
     return ret;
-
 }

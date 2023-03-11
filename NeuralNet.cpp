@@ -2,6 +2,16 @@
 #include "NeuralNet.h"
 #include <memory>
 
+size_t NeuralNet::layersNum() const {
+    return layers.size();
+}
+
+void NeuralNet::destroyAll() {
+    for(int i = 0; i < layers.size(); ++i) {
+        delete layers[i];
+    }
+}
+
 void NeuralNet::addLayer(Layer *layer) {
 //    if (!layers.empty()) {
 //        assert(layer.inputSize == layers[layers.size() - 1]->outputSize);

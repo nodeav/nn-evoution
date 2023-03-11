@@ -76,12 +76,6 @@ void Visualizer::startVizLoop() {
         if (step >= frames) {
             continue;
         }
-        auto now = std::chrono::steady_clock::now();
-        auto elapsed = now - start;
-        start = now;
-
-        std::cout << duration_cast<std::chrono::milliseconds>(elapsed).count() << "ms elapsed since last frame" << std::endl;
-
         step = frames;
 
 

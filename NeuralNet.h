@@ -24,6 +24,9 @@ public:
 
     Eigen::MatrixXf backProp(const Eigen::MatrixXf &error, float learningRate);
 
+    size_t layersNum() const;
+
+    void destroyAll();
 };
 
 
