@@ -5,14 +5,14 @@
 #include <thread>
 #include <chrono>
 
-constexpr int num_entities = 3;
+constexpr int num_entities = 16;
 
 void initBoard(Board &board) {
     std::random_device r;
     std::default_random_engine e1(r());
     std::uniform_real_distribution<loc_t> loc_dist(0, 1);
     std::uniform_real_distribution<loc_t> radian_dist(0, 2.0 * M_PI);
-    std::uniform_real_distribution<loc_t> speed_dist(0, 0.01);
+    std::uniform_real_distribution<loc_t> speed_dist(0.005, 0.01);
 
 
     for (uint32_t i = 0; i < num_entities; i++) {

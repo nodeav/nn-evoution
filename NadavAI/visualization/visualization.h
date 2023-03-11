@@ -12,8 +12,8 @@ constexpr int SPRITE_CYCLE_LEN = 3;
 constexpr int SPRITE_SIZE = 48;
 constexpr int AGENT_SIZE = 96;
 
-constexpr int WINDOW_WIDTH = 1000;
-constexpr int WINDOW_HEIGHT = 1000;
+constexpr int WINDOW_WIDTH = 512;
+constexpr int WINDOW_HEIGHT = 512;
 
 enum class Direction {
     right, left, up, down
@@ -45,8 +45,6 @@ class Visualizer {
     std::vector<Agent> agents;
     static bool initialized;
     std::mutex agents_lock;
-
-    void startBlockingVizLoop();
 
 public:
     Visualizer();

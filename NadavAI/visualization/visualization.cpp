@@ -27,14 +27,14 @@ Direction Agent::radiansToDirection(Radian angle) {
     }
 
     if (degrees < 135) {
-        return Direction::left;
+        return Direction::right;
     }
 
     if (degrees < 225) {
         return Direction::up;
     }
 
-    return Direction::right;
+    return Direction::left;
 }
 
 bool Visualizer::initialized = false;
@@ -58,7 +58,7 @@ Visualizer::Visualizer() {
     SDL_RenderClear(renderer);
 }
 
-void Visualizer::startBlockingVizLoop() {
+void Visualizer::startVizLoop() {
     SDL_Event event;
     while (!quit) {
 
@@ -76,22 +76,27 @@ void Visualizer::startBlockingVizLoop() {
         if (step >= frames) {
             continue;
         }
+        auto now = std::chrono::steady_clock::now();
+        auto elapsed = now - start;
+        start = now;
+
+        std::cout << duration_cast<std::chrono::milliseconds>(elapsed).count() << "ms elapsed since last frame" << std::endl;
 
         step = frames;
 
+
         // rendering
         Sint32 sprite = frames % SPRITE_CYCLE_LEN;
-
         {
+            SDL_RenderClear(renderer);
             std::lock_guard<std::mutex> l(agents_lock);
             for (const auto &agent: agents) {
                 SDL_Rect srcrect = {sprite * SPRITE_SIZE, agent.sprite_direction(), SPRITE_SIZE, SPRITE_SIZE};
                 SDL_Rect dstrect = {agent.pos_x, agent.pos_y, AGENT_SIZE, AGENT_SIZE};
 
-                SDL_RenderClear(renderer);
                 SDL_RenderCopy(renderer, texture, &srcrect, &dstrect);
-                SDL_RenderPresent(renderer);
             }
+            SDL_RenderPresent(renderer);
         }
 
         while (SDL_PollEvent(&event) != 0) {
@@ -110,11 +115,6 @@ void Visualizer::startBlockingVizLoop() {
     }
 }
 
-// TODO: remove this
-void Visualizer::startVizLoop() {
-    startBlockingVizLoop();
-}
-
 Visualizer::~Visualizer() {
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(image);
@@ -126,6 +126,7 @@ Visualizer::~Visualizer() {
 
 void Visualizer::updateAgentList(const Board &board) {
     std::lock_guard<std::mutex> l(agents_lock);
+    agents.clear();
     for (const auto &entity: board.getEntities()) {
         agents.emplace_back(*entity);
     }
