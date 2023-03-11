@@ -14,14 +14,9 @@
 
 
 Up Next:
-1. choose move:
-    a. implement the net
-    b. connect it to input+output
-    c. choose move according to its output
+1. implement birth mechanism
 
-2. implement birth mechanism
-
-3. adjust smart evolution:
+2. adjust smart evolution:
     a. copying the net to child
     b. add a mutation
 */
