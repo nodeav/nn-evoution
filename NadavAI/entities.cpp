@@ -51,6 +51,7 @@ void Entity::moveInBoundries(Location boundary) {
     loc_t delta_y = angle_.sine() * speed_;
 
     loc += {delta_x, delta_y};
+    loc += boundary; // TODO: do we need this?????
     loc %= boundary;
 }
 
@@ -68,6 +69,6 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> entities) {
     // order doesn't matter
     assert(out.size() == 2);
     speed_ = (out(0) + 1) / 400; // TODO: normalize prettier
-    angle_ = out(1);
+    angle_ = out(1) * 2 * M_PI;
     // std::cout << "Net's output is speed: " << speed_ << " angle: " << angle_.value() << std::endl;
 }
