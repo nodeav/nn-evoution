@@ -28,10 +28,11 @@ void initBoard(Board &board) {
 
 int main(int argc, char **argv) {
     Visualizer vis;
-    std::thread thread([&vis]() {
+    bool run = true;
+    std::thread thread([&vis, &run]() {
         Board board(1, 1);
         initBoard(board);
-        while (true) {
+        while (run) {
             using namespace std::chrono_literals;
             board.moveAll();
             vis.updateAgentList(board);
@@ -40,5 +41,7 @@ int main(int argc, char **argv) {
     });
     thread.detach();
     vis.startVizLoop();
+
+    run = false;
     thread.join();
 }
