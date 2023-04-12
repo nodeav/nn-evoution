@@ -5,6 +5,8 @@
 #include <vector>
 #include <thread>
 
+#include <csignal>
+
 #include "entities.h"
 #include "board.h"
 
@@ -46,6 +48,7 @@ class Visualizer {
     static bool initialized;
     std::mutex agents_lock;
 
+    void registerCleanupSignalHandler();
 public:
     Visualizer();
 
@@ -54,4 +57,22 @@ public:
     void updateAgentList(const Board &board);
 
     void startVizLoop();
+    void stopVizLoop();
+};
+
+// TODO: move to util
+// TODO: probably unnecessary for now,
+// but will be useful for e.g saving on exit or something
+class SignalHandler {
+    using handler_type = std::function<void(int)>;
+public:
+    static inline handler_type handler;
+    static void signalHandler(int signal) {
+        handler(signal);
+    }
+    static void init(handler_type new_handler) {
+        handler = std::move(new_handler);
+        std::signal(SIGINT, signalHandler);
+        std::signal(SIGABRT, signalHandler);
+    }
 };
