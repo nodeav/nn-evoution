@@ -86,7 +86,7 @@ void Visualizer::startVizLoop() {
             std::lock_guard<std::mutex> l(agents_lock);
             for (const auto &agent: agents) {
                 SDL_Rect srcrect = {sprite * SPRITE_SIZE, agent.sprite_direction(), SPRITE_SIZE, SPRITE_SIZE};
-                SDL_Rect dstrect = {agent.pos_x, agent.pos_y, AGENT_SIZE, AGENT_SIZE};
+                SDL_Rect dstrect = {agent.pos_x - AGENT_SIZE / 2, agent.pos_y - AGENT_SIZE / 2, AGENT_SIZE, AGENT_SIZE};
 
                 SDL_RenderCopy(renderer, texture, &srcrect, &dstrect);
             }
