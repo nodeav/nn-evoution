@@ -45,6 +45,8 @@ Visualizer::Visualizer() {
     }
     initialized = true;
 
+    registerCleanupSignalHandler();
+
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
 
@@ -110,6 +112,7 @@ void Visualizer::startVizLoop() {
 }
 
 Visualizer::~Visualizer() {
+    stopVizLoop();
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(image);
     SDL_DestroyRenderer(renderer);
@@ -124,4 +127,14 @@ void Visualizer::updateAgentList(const Board &board) {
     for (const auto &entity: board.getEntities()) {
         agents.emplace_back(*entity);
     }
+}
+
+void Visualizer::stopVizLoop() {
+    quit = true;
+}
+
+void Visualizer::registerCleanupSignalHandler() {
+    SignalHandler::init([&](int) {
+       stopVizLoop();
+    });
 }

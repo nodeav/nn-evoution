@@ -11,7 +11,7 @@ set(NeuralNetLib nn)
 find_package(Eigen3 REQUIRED)
 
 # include the current directory in the include path
-include_directories(.)
+include_directories(. ${EIGEN3_INCLUDE_DIR})
 
 # add the library target
 add_library(${NeuralNetLib} SHARED FCLayer.cpp NeuralNet.cpp THALayer.cpp FlattenLayer.cpp)

@@ -68,7 +68,14 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> entities) {
 
     // order doesn't matter
     assert(out.size() == 2);
-    speed_ = (out(0) + 1) / 400; // TODO: normalize prettier
-    angle_ = out(1) * 2 * M_PI;
+
+    // tanh is in range [-1, 1]
+    // convert to [0, 1]
+    auto normalize_tanh = [](auto n) {
+        return (n + 1) / 2;
+    };
+
+    speed_ = normalize_tanh(out(0)) / 200; // TODO: normalize prettier
+    angle_ = normalize_tanh(out(1)) * 2 * M_PI;
     // std::cout << "Net's output is speed: " << speed_ << " angle: " << angle_.value() << std::endl;
 }
