@@ -20,20 +20,17 @@ Agent::Agent(const Entity &entity) {
     direction = radiansToDirection(entity.angle());
 }
 
+
 Direction Agent::radiansToDirection(Radian angle) {
-    auto degrees = angle.toDegrees();
-    if ((degrees >= 0 && degrees <= 45) || (degrees >= 315 && degrees <= 360)) {
+    if (angle.between(Radian::fromDegrees(225.0), Radian::fromDegrees(315.0))) {
         return Direction::down;
     }
-
-    if (degrees < 135) {
+    if (angle.between(Radian::fromDegrees(315.0), Radian::fromDegrees(45.0))) {
         return Direction::right;
     }
-
-    if (degrees < 225) {
+    if (angle.between(Radian::fromDegrees(45.0), Radian::fromDegrees(135.0))) {
         return Direction::up;
     }
-
     return Direction::left;
 }
 

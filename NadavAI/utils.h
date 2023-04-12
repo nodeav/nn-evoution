@@ -39,6 +39,10 @@ public:
         return value_ * 180.0 / M_PI;
     }
 
+    static Radian fromDegrees(float dergees) {
+        return Radian(dergees * M_PI / 180.0);
+    }
+
     size_t toIntDegrees() const {
         return (value_ * 180 / M_PI);
     }
