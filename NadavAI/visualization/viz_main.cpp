@@ -43,5 +43,8 @@ int main(int argc, char **argv) {
     vis.startVizLoop();
 
     run = false;
-    thread.join();
+
+    if (thread.joinable()) {
+        thread.join();
+    }
 }
