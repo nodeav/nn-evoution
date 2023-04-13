@@ -28,6 +28,9 @@ void Board::moveAll() {
     for (auto& entity : entities) {
         auto entitiesInFov = getEntitiesInFov(entity);
         entity->acknowledgeEntities(entitiesInFov);
+    }
+
+    for (auto& entity : entities) {
         entity->moveInBoundries({cols, rows});
     }
 }
