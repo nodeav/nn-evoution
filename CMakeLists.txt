@@ -30,4 +30,5 @@ target_link_libraries(eigen_test Eigen3::Eigen)
 # Example(s)
 add_subdirectory(mnist)
 
+add_subdirectory(misc_util)
 add_subdirectory(NadavAI)

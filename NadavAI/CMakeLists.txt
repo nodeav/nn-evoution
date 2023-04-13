@@ -15,7 +15,7 @@ add_library(${NAI_LIB} entities.cpp
 # include the current directory in the include path
 include_directories(. ..)
 
-target_link_libraries(${NAI_LIB} ${NeuralNetLib}  )
+target_link_libraries(${NAI_LIB} ${NeuralNetLib} misc_util)
 target_link_libraries(${EXEC_NAME} Eigen3::Eigen ${NAI_LIB})
 
 #Testing:
