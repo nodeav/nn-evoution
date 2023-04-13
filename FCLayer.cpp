@@ -26,7 +26,4 @@ FCLayer::FCLayer(Eigen::Vector2i inputSize, int outputCols) {
 
     weights.setRandom(inputCols, outputCols);
     bias.setRandom(inputRows, outputCols);
-
-    std::cout << "My input is " << this->inputSize.transpose() << ", my weights are " << weights.rows() << " "
-              << weights.cols() << " and my output is " << outputSize.transpose() << "." << std::endl;
 }
