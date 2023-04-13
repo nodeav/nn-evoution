@@ -13,7 +13,7 @@ add_library(${NAI_LIB} entities.cpp
                         utils.cpp)
 
 # include the current directory in the include path
-include_directories(. .. /usr/local/Cellar/eigen/3.4.0_1/include/eigen3/)
+include_directories(. ..)
 
 target_link_libraries(${NAI_LIB} ${NeuralNetLib}  )
 target_link_libraries(${EXEC_NAME} Eigen3::Eigen ${NAI_LIB})
