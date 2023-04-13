@@ -1,4 +1,3 @@
-
 #include "board.h"
 
 #include <iostream>
@@ -10,6 +9,7 @@
 Board::Board(float row, float col) {
     this->rows = row;
     this->cols = col;
+    threadPool = std::make_unique<ThreadPool>(12);
 }
 
 void Board::addEntity(EntityPtr entity) {
@@ -24,14 +24,30 @@ void Board::print() const {
 
 bool enablePrint = false;
 
+// todo: prettify
 void Board::moveAll() {
-    for (auto& entity : entities) {
-        auto entitiesInFov = getEntitiesInFov(entity);
-        entity->acknowledgeEntities(entitiesInFov);
-    }
+    std::vector<std::future<void>> futures;
+    futures.reserve(entities.size());
 
     for (auto& entity : entities) {
-        entity->moveInBoundries({cols, rows});
+        futures.push_back(threadPool->enqueue([&]() {
+            auto entitiesInFov = getEntitiesInFov(entity);
+            entity->acknowledgeEntities(entitiesInFov);
+        }));
+    }
+
+    for(const auto& future : futures) {
+        future.wait();
+    }
+    futures.clear();
+
+    for (auto& entity : entities) {
+        futures.push_back(threadPool->enqueue([&]() {
+            entity->moveInBoundries({cols, rows});
+        }));
+    }
+    for(const auto& future : futures) {
+        future.wait();
     }
 }
 
