@@ -20,9 +20,6 @@ public:
     Radian(float value) : value_(fmod(value+2.0*M_PI, 2.0 * M_PI)) {}
     Radian() {}
 
-    using Hasher = decltype(RadianHasher());
-
-    // TODO: unit-test this
     bool between(Radian start, Radian end) const {
         // assumes all angles are positive
         if (end > start) {
@@ -43,8 +40,8 @@ public:
         return Radian(dergees * M_PI / 180.0);
     }
 
-    size_t toIntDegrees() const {
-        return (value_ * 180 / M_PI);
+    int toIntDegrees() const {
+        return value_ / M_PI * 180;
     }
 
     float value() const {

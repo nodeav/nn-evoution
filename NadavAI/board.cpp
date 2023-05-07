@@ -59,7 +59,7 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
     std::vector<EntityDistanceResult> ret;
 
     // TODO: hash with something vaguer than float
-    std::unordered_map<Radian, EntityDistanceResult, Radian::Hasher> inSight;
+    std::unordered_map<int, EntityDistanceResult> inSight;
 
     for (const auto& otherEntity: entities) {
         if (entity == otherEntity) {
@@ -73,7 +73,7 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
         }
 
         Radian angle = getAngle(entity->location(), otherEntity->location());
-
+        auto intAngle = angle.toIntDegrees();
         // as first step, only exact same angle can block the sight
         // in the next step, we can use the radius of the entity we see
         // in the next-next step, perspective can be implemented
@@ -82,9 +82,9 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
             continue;
         }
 
-        auto sawEntity = inSight.find(angle);
+        auto sawEntity = inSight.find(intAngle);
         if (sawEntity == inSight.end() || distSquared < sawEntity->second.distanceToEntity) {
-            inSight[angle] = {otherEntity->speed(), angle, distSquared};
+            inSight[intAngle] = {otherEntity->speed(), angle, distSquared};
         }
     }
 
