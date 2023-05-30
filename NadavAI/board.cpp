@@ -46,9 +46,16 @@ void Board::moveAll() {
             entity->moveInBoundries({cols, rows});
         }));
     }
+
     for(const auto& future : futures) {
         future.wait();
     }
+
+    entities.erase(
+        std::remove_if(entities.begin(), entities.end(), [] (auto ent) {
+            return ent->isDead();
+        }), entities.end()
+    );
 }
 
 std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entity) {
@@ -74,9 +81,6 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
 
         Radian angle = getAngle(entity->location(), otherEntity->location());
         auto intAngle = angle.toIntDegrees();
-        // as first step, only exact same angle can block the sight
-        // in the next step, we can use the radius of the entity we see
-        // in the next-next step, perspective can be implemented
 
         if (!angle.between(fovStart, fovEnd)) {
             continue;

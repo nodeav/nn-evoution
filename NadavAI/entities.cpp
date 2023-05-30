@@ -47,15 +47,33 @@ std::string Entity::toString() const {
 }
 
 void Entity::moveInBoundries(Location boundary) {
+    if (energy < speed_) {
+        onEnergyDepleted();
+        return;
+    }
+
     loc_t delta_x = angle_.cosine() * speed_;
     loc_t delta_y = angle_.sine() * speed_;
 
     loc += {delta_x, delta_y};
     loc += boundary; // TODO: do we need this?????
     loc %= boundary;
+
+    energy -= speed_;
+}
+
+bool Entity::shouldThink() const {
+    return state == State::ACTIVE;
+}
+
+bool Entity::isDead() const {
+    return state == State::DEAD;
 }
 
 void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> entities) {
+    if (!shouldThink()) {
+        return;
+    }
     std::sort(entities.begin(), entities.end(), [](auto a, auto b) {
                                                 return (a.distanceToEntity < b.distanceToEntity);
                                                 });
@@ -75,7 +93,13 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> entities) {
         return (n + 1) / 2;
     };
 
-    speed_ = normalize_tanh(out(0)) / 200; // TODO: normalize prettier
+    speed_ = normalize_tanh(out(0)) / 50; // TODO: normalize prettier
     angle_ = normalize_tanh(out(1)) * 2 * M_PI;
     // std::cout << "Net's output is speed: " << speed_ << " angle: " << angle_.value() << std::endl;
+}
+
+void Entity::onEnergyDepleted() {
+    // TODO: on Tarif -> inactive
+    // std::cout << "entity " << idx << " is dead" << std::endl;
+    state = State::DEAD;
 }

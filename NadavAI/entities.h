@@ -9,13 +9,17 @@
 
 typedef float speed_t;
 typedef float radius_t;
-
-
-
+typedef float energy_t;
 
 constexpr int entitySize = 3; // speed, angle, distance
 constexpr int entityNum = 16;
 constexpr int controlSize = 2;  // angle, speed
+
+enum class State {
+    ACTIVE = 0,
+    INACTIVE = 1,
+    DEAD = 2,
+};
 
 struct EntityDistanceResult {
     EntityDistanceResult() {
@@ -47,7 +51,10 @@ private:
     distance_t maxSightDistance_ = 5;
     Radian fieldOfView_ = 0.5;
     NeuralNet brain;
+    energy_t energy = 1;
+    State state = State::ACTIVE;
 
+    bool shouldThink() const;
 
 public:
     int idx = 0;
@@ -65,6 +72,8 @@ public:
     Radian fieldOfView() const { return fieldOfView_; }
     bool operator==(const Entity& other) const { return idx == other.idx; };
     void acknowledgeEntities(std::vector<EntityDistanceResult> entities);
+    void onEnergyDepleted();
+    bool isDead() const;
 };
 
 typedef std::shared_ptr<Entity> EntityPtr;

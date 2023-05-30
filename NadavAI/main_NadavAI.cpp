@@ -14,9 +14,18 @@
 
 
 Up Next:
-1. implement birth mechanism
+1. implement energy
+    a. for toref:
+        i.  if depleted -> die
+        ii. to gain energy -> eat
 
-2. adjust smart evolution:
+    b. for tarif:
+        i.  if depleted -> don't move
+        ii. to gain energy -> wait
+
+2. implement birth mechanism
+
+3. adjust smart evolution:
     a. copying the net to child
     b. add a mutation
 */

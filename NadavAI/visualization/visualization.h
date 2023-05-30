@@ -14,8 +14,8 @@ constexpr int SPRITE_CYCLE_LEN = 3;
 constexpr int SPRITE_SIZE = 48;
 constexpr int AGENT_SIZE = 96;
 
-constexpr int WINDOW_WIDTH = 512;
-constexpr int WINDOW_HEIGHT = 512;
+constexpr int WINDOW_WIDTH = 1024;
+constexpr int WINDOW_HEIGHT = 1024;
 
 enum class Direction {
     right, left, up, down
