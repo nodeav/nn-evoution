@@ -16,12 +16,12 @@
 Up Next:
 1. implement energy
     a. for toref:
-        i.  if depleted -> die
+        i.  if depleted -> die            V
         ii. to gain energy -> eat
 
     b. for tarif:
-        i.  if depleted -> don't move
-        ii. to gain energy -> wait
+        i.  if depleted -> don't move     V
+        ii. to gain energy -> wait        V
 
 2. implement birth mechanism
 
@@ -61,13 +61,14 @@ int main(int argc, char** argv) {
     std::uniform_real_distribution<loc_t> speed_dist(0, 1);
 
 
-    for(uint32_t i = 0; i < entities_size; i++) {
+    for(uint32_t i = 0; i < entities_size / 2; i++) {
         loc_t x = loc_dist(e1);
         loc_t y = loc_dist(e1);
         speed_t speed = speed_dist(e1);
         Radian radian = radian_dist(e1);
 
-        board.addEntity(std::make_shared<Entity>(x, y, speed, radian, 2 /* radius */));
+        board.addEntity(std::make_shared<Toref>(x, y, speed, radian, 2 /* radius */));
+        board.addEntity(std::make_shared<Tarif>(x, y, speed, radian, 2 /* radius */));
     }
 
 //    cout << "Start:" << endl;

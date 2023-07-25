@@ -98,8 +98,21 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> entities) {
     // std::cout << "Net's output is speed: " << speed_ << " angle: " << angle_.value() << std::endl;
 }
 
-void Entity::onEnergyDepleted() {
-    // TODO: on Tarif -> inactive
-    // std::cout << "entity " << idx << " is dead" << std::endl;
+
+/********** Toref *************/
+
+void Toref::onEnergyDepleted() {
     state = State::DEAD;
+}
+
+/********** Tarif *************/
+void Tarif::onEnergyDepleted() {
+    state = State::INACTIVE; // TODO: do we need this INACTIVE?
+    if (restIterations == whenCanMove) {
+        state = State::ACTIVE;
+        energy = 1; // TODO: make better energy
+        restIterations = 0;
+    } else {
+        ++restIterations;
+    }
 }

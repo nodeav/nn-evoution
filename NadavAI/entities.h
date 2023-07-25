@@ -51,10 +51,12 @@ private:
     distance_t maxSightDistance_ = 5;
     Radian fieldOfView_ = 0.5;
     NeuralNet brain;
+    bool shouldThink() const;
+
+protected:
     energy_t energy = 1;
     State state = State::ACTIVE;
 
-    bool shouldThink() const;
 
 public:
     int idx = 0;
@@ -72,16 +74,31 @@ public:
     Radian fieldOfView() const { return fieldOfView_; }
     bool operator==(const Entity& other) const { return idx == other.idx; };
     void acknowledgeEntities(std::vector<EntityDistanceResult> entities);
-    void onEnergyDepleted();
+    virtual void onEnergyDepleted() = 0;
     bool isDead() const;
 };
 
 typedef std::shared_ptr<Entity> EntityPtr;
 
 class Toref : public Entity {
+public:
+    Toref(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size) :
+         Entity(x, y, speed, angle, size) {}
+    Toref() : Entity() {}
+    void onEnergyDepleted();
+
+private:
 
 };
 
 class Tarif : public Entity {
+public:
+    Tarif(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size) :
+         Entity(x, y, speed, angle, size) {}
+    Tarif() : Entity() {}
+    void onEnergyDepleted();
 
+private:
+    uint32_t restIterations = 0;
+    static const uint32_t whenCanMove = 60;
 };
