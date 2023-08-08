@@ -62,7 +62,7 @@ void Entity::moveInBoundries(Location boundary) {
     energy -= speed_;
 }
 
-bool Entity::shouldThink() const {
+bool Entity::isActive() const {
     return state == State::ACTIVE;
 }
 
@@ -70,17 +70,29 @@ bool Entity::isDead() const {
     return state == State::DEAD;
 }
 
-void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> entities) {
-    if (!shouldThink()) {
+void Entity::die() {
+    state = State::DEAD;
+    std::cout << idx << ": I died" << std::endl;
+}
+
+void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
+    if (!isActive()) {
         return;
     }
-    std::sort(entities.begin(), entities.end(), [](auto a, auto b) {
+    std::sort(results.begin(), results.end(), [](auto a, auto b) {
                                                 return (a.distanceToEntity < b.distanceToEntity);
                                                 });
-    entities.resize(entityNum, {});
+    assert(entityNum > 0);
+
+    size_t resultsToUse = std::min(static_cast<size_t>(entityNum), results.size());
+
     Eigen::MatrixXf netInput(entityNum, entitySize);
-    for (int i = 0; i < entityNum; ++i) {
-        netInput.row(i) = Eigen::Map<Eigen::Vector3f>(entities[i].toRow().data());
+    for (int i = 0; i < resultsToUse; ++i) {
+        netInput.row(i) = Eigen::Map<Eigen::Vector3f>(results[i].toRow().data());
+    }
+
+    for (int i = resultsToUse; i < entityNum; ++i) {
+        netInput.row(i) = Eigen::Map<Eigen::Vector3f>(EntityDistanceResult::emptyRow().data());
     }
     auto out = brain.predict(netInput);
 
@@ -102,7 +114,23 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> entities) {
 /********** Toref *************/
 
 void Toref::onEnergyDepleted() {
-    state = State::DEAD;
+    die();
+}
+
+void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
+    if (!isActive()) { // TODO: WHY?
+        return;
+    }
+    for (auto& result : results) {
+        if (result.entity->isDead() || result.entity->getType() == EntityType::TOREF) {
+            continue;
+        }
+        if (result.distanceToEntity < 0.02) { // TODO: move to const
+            std::cout << idx << ": I ate " << result.entity->idx << std::endl;
+            energy = 1; // TODO: reset energy
+            result.entity->die();
+        }
+    }
 }
 
 /********** Tarif *************/
@@ -115,4 +143,8 @@ void Tarif::onEnergyDepleted() {
     } else {
         ++restIterations;
     }
+}
+
+void Tarif::maybeEat(std::vector<EntityDistanceResult> entities) {
+    return;
 }

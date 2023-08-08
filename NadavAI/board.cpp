@@ -31,7 +31,8 @@ void Board::moveAll() {
 
     for (auto& entity : entities) {
         futures.push_back(threadPool->enqueue([&]() {
-            auto entitiesInFov = getEntitiesInFov(entity);
+            std::vector<EntityDistanceResult> entitiesInFov = getEntitiesInFov(entity);
+            entity->maybeEat(entitiesInFov);
             entity->acknowledgeEntities(entitiesInFov);
         }));
     }
@@ -88,7 +89,7 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
 
         auto sawEntity = inSight.find(intAngle);
         if (sawEntity == inSight.end() || distSquared < sawEntity->second.distanceToEntity) {
-            inSight[intAngle] = {otherEntity->speed(), angle, distSquared};
+            inSight[intAngle] = {otherEntity, angle, distSquared};
         }
     }
 

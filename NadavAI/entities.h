@@ -21,25 +21,15 @@ enum class State {
     DEAD = 2,
 };
 
-struct EntityDistanceResult {
-    EntityDistanceResult() {
-        speedOfEntity = 0;
-        angleToEntity = 0;
-        distanceToEntity = 0;
-    }
-
-    EntityDistanceResult(speed_t speed, Radian angle, distance_t dist) {
-        speedOfEntity = speed;
-        angleToEntity = angle;
-        distanceToEntity = dist;
-    }
-    speed_t speedOfEntity;
-    Radian angleToEntity;
-    distance_t distanceToEntity;
-    std::array<float, entitySize> toRow() const {
-        return {speedOfEntity, angleToEntity.value(), distanceToEntity};
-    }
+enum class EntityType {
+    TOREF = 0,
+    TARIF = 1,
 };
+
+struct EntityDistanceResult;
+class Entity;
+typedef std::shared_ptr<Entity> EntityPtr;
+
 
 class Entity {
 private:
@@ -51,13 +41,12 @@ private:
     distance_t maxSightDistance_ = 5;
     Radian fieldOfView_ = 0.5;
     NeuralNet brain;
-    bool shouldThink() const;
 
 protected:
     energy_t energy = 1;
     State state = State::ACTIVE;
 
-
+    bool isActive() const;
 public:
     int idx = 0;
     Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size);
@@ -75,17 +64,44 @@ public:
     bool operator==(const Entity& other) const { return idx == other.idx; };
     void acknowledgeEntities(std::vector<EntityDistanceResult> entities);
     virtual void onEnergyDepleted() = 0;
+    virtual void maybeEat(std::vector<EntityDistanceResult> results) = 0;
+    virtual EntityType getType() const = 0;
+    void die();
     bool isDead() const;
 };
 
-typedef std::shared_ptr<Entity> EntityPtr;
+struct EntityDistanceResult {
+    EntityDistanceResult() {
+        entity = nullptr;
+        angleToEntity = 0;
+        distanceToEntity = 0;
+    }
+
+    EntityDistanceResult(EntityPtr entity_, Radian angle, distance_t dist) {
+        entity = entity_;
+        angleToEntity = angle;
+        distanceToEntity = dist;
+    }
+    EntityPtr entity;
+    Radian angleToEntity;
+    distance_t distanceToEntity;
+    std::array<float, entitySize> toRow() const { // TODO: add entity type
+        return {entity->speed(), angleToEntity.value(), distanceToEntity};
+    }
+    static std::array<float, entitySize> emptyRow() { // TODO: add entity type
+        return {0, 0, 0};
+    }
+};
+
 
 class Toref : public Entity {
 public:
     Toref(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size) :
          Entity(x, y, speed, angle, size) {}
     Toref() : Entity() {}
-    void onEnergyDepleted();
+    void onEnergyDepleted() override;
+    void maybeEat(std::vector<EntityDistanceResult> results) override;
+    EntityType getType() const override { return EntityType::TOREF; }
 
 private:
 
@@ -96,7 +112,9 @@ public:
     Tarif(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size) :
          Entity(x, y, speed, angle, size) {}
     Tarif() : Entity() {}
-    void onEnergyDepleted();
+    void onEnergyDepleted() override;
+    void maybeEat(std::vector<EntityDistanceResult> results) override;
+    EntityType getType() const override { return EntityType::TARIF; }
 
 private:
     uint32_t restIterations = 0;
