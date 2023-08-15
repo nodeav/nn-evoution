@@ -110,11 +110,20 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
     // std::cout << "Net's output is speed: " << speed_ << " angle: " << angle_.value() << std::endl;
 }
 
+EntityPtr Entity::maybeGiveBirth() {
+    if (shouldGiveBirth()) {
+
+    }
+}
 
 /********** Toref *************/
 
 void Toref::onEnergyDepleted() {
     die();
+}
+
+bool Toref::shouldGiveBirth() {
+
 }
 
 void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
@@ -147,4 +156,8 @@ void Tarif::onEnergyDepleted() {
 
 void Tarif::maybeEat(std::vector<EntityDistanceResult> entities) {
     return;
+}
+
+bool Tarif::shouldGiveBirth() {
+
 }

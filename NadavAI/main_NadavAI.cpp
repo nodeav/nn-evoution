@@ -17,17 +17,25 @@ Up Next:
 1. implement energy
     a. for toref:
         i.  if depleted -> die            V
-        ii. to gain energy -> eat
+        ii. to gain energy -> eat         V
 
     b. for tarif:
         i.  if depleted -> don't move     V
         ii. to gain energy -> wait        V
 
 2. implement birth mechanism
+    a. copy
+        a. for tarif - if full energy
+        b. for toref - if ate 2 entities
+    b. mutate
 
 3. adjust smart evolution:
     a. copying the net to child
     b. add a mutation
+
+4. implement cooldown for toref after eating
+
+5. improve birth mechanism and decay
 */
 
 using std::cout;

@@ -42,9 +42,17 @@ void Board::moveAll() {
     }
     futures.clear();
 
+    std::vector<EntityPtr> newEntities;
+    std::mutex mut;
+
     for (auto& entity : entities) {
         futures.push_back(threadPool->enqueue([&]() {
             entity->moveInBoundries({cols, rows});
+            EntityPtr possibleEntity = entity->maybeGiveBirth();
+            if (possibleEntity) {
+                std::lock_guard<std::mutex> guard(mut);
+                newEntities.insert(possibleEntity);
+            }
         }));
     }
 
@@ -57,6 +65,8 @@ void Board::moveAll() {
             return ent->isDead();
         }), entities.end()
     );
+
+    entities.insert(entities.end(), newEntities.begin(), newEntities.end());
 }
 
 std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entity) {
