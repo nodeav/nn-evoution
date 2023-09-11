@@ -114,6 +114,8 @@ EntityPtr Entity::maybeGiveBirth() {
     if (shouldGiveBirth()) {
 
     }
+    return nullptr;
+    // TODO we were here-ish
 }
 
 /********** Toref *************/
@@ -122,8 +124,8 @@ void Toref::onEnergyDepleted() {
     die();
 }
 
-bool Toref::shouldGiveBirth() {
-
+bool Toref::shouldGiveBirth() const {
+    return true;
 }
 
 void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
@@ -158,6 +160,6 @@ void Tarif::maybeEat(std::vector<EntityDistanceResult> entities) {
     return;
 }
 
-bool Tarif::shouldGiveBirth() {
-
+bool Tarif::shouldGiveBirth() const{
+    return true;
 }

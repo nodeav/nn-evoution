@@ -30,7 +30,7 @@ Up Next:
     b. mutate
 
 3. adjust smart evolution:
-    a. copying the net to child
+    a. copying the net to child           V
     b. add a mutation
 
 4. implement cooldown for toref after eating
