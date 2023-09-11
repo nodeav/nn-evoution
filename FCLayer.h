@@ -13,6 +13,10 @@ public:
 
     FCLayer(Eigen::Vector2i inputSize, int outputCols);
 
+    FCLayer(const FCLayer& other);
+
+    Layer* clone() override;
+
     ~FCLayer() override = default;
 
     // Move assignment operator

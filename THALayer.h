@@ -7,6 +7,12 @@
 class THALayer : public Layer {
 public:
     ~THALayer() override = default;
+    THALayer(const THALayer& other) :
+        Layer(other)
+        { }
+
+    Layer* clone() override;
+
     Eigen::MatrixXf lastInput;
 
     Eigen::MatrixXf forward(Eigen::MatrixXf input) override;
@@ -14,7 +20,10 @@ public:
     Eigen::MatrixXf backward(Eigen::MatrixXf error, float learningRate) override;
 
 public:
-    THALayer();
+    THALayer() :
+        Layer({-1, -1}, {-1, -1})
+        { }
+
 };
 
 

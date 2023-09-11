@@ -18,12 +18,19 @@ FCLayer::FCLayer(std::size_t inputCols, std::size_t outputCols) :
         FCLayer({1, inputCols}, outputCols) {
 }
 
-FCLayer::FCLayer(Eigen::Vector2i inputSize, int outputCols) {
-    auto inputRows = inputSize.y();
-    auto inputCols = inputSize.x();
-    this->inputSize = {inputCols, inputRows};
-    this->outputSize = {outputCols, inputRows};
+FCLayer::FCLayer(Eigen::Vector2i inputSize, int outputCols)
+: Layer({inputSize.x(), inputSize.y()},
+        {outputCols, inputSize.y()}) {
+    weights.setRandom(inputSize.x(), outputCols);
+    bias.setRandom(inputSize.y(), outputCols);
+}
 
-    weights.setRandom(inputCols, outputCols);
-    bias.setRandom(inputRows, outputCols);
+FCLayer::FCLayer(const FCLayer& other)
+: Layer(other) {
+    weights = other.weights;
+    bias = other.bias;
+}
+
+Layer* FCLayer::clone() {
+    return new FCLayer(*this);
 }

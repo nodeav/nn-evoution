@@ -2,6 +2,13 @@
 #include "NeuralNet.h"
 #include <memory>
 
+
+NeuralNet::NeuralNet(const NeuralNet& other) {
+    for (auto& layer : other.layers) {
+        layers.emplace_back(layer->clone());
+    }
+}
+
 size_t NeuralNet::layersNum() const {
     return layers.size();
 }

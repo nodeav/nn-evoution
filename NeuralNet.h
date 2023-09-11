@@ -10,7 +10,8 @@ class NeuralNet {
     std::vector<Layer *> layers;
 
 public:
-    NeuralNet duplicate();
+    NeuralNet() {}
+    NeuralNet(const NeuralNet& other);
 
     void addLayer(Layer *layer);
 

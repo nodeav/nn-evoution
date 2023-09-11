@@ -11,7 +11,6 @@ Eigen::MatrixXf THALayer::backward(Eigen::MatrixXf error, float learningRate) {
     return error.array() * tanhPrime;
 }
 
-THALayer::THALayer() {
-    this->inputSize = {-1, -1};
-    this->outputSize = {-1, -1};
+Layer* THALayer::clone() {
+    return new THALayer(*this);
 }
