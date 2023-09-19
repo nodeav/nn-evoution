@@ -40,9 +40,10 @@ private:
     radius_t radius;
     distance_t maxSightDistance_ = 5;
     Radian fieldOfView_ = 0.5;
-    NeuralNet brain;
+    virtual EntityPtr clone() const = 0;
 
 protected:
+    NeuralNet brain;
     energy_t energy = 1;
     State state = State::ACTIVE;
 
@@ -52,6 +53,7 @@ public:
     int idx = 0;
     Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size);
     Entity() : Entity(0, 0, 0, 0, 0) {}
+    Entity(const Entity& other);
     virtual ~Entity();
     std::string toString() const;
 
@@ -101,12 +103,14 @@ public:
     Toref(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size) :
          Entity(x, y, speed, angle, size) {}
     Toref() : Entity() {}
+    Toref(const Toref& other);
     void onEnergyDepleted() override;
     void maybeEat(std::vector<EntityDistanceResult> results) override;
     EntityType getType() const override { return EntityType::TOREF; }
 
 private:
     bool shouldGiveBirth() const override;
+    EntityPtr clone() const override;
 
 };
 
@@ -115,6 +119,7 @@ public:
     Tarif(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size) :
          Entity(x, y, speed, angle, size) {}
     Tarif() : Entity() {}
+    Tarif(const Tarif& other);
     void onEnergyDepleted() override;
     void maybeEat(std::vector<EntityDistanceResult> results) override;
     EntityType getType() const override { return EntityType::TARIF; }
@@ -123,4 +128,5 @@ private:
     uint32_t restIterations = 0;
     static const uint32_t whenCanMove = 60;
     bool shouldGiveBirth() const override;
+    EntityPtr clone() const override;
 };

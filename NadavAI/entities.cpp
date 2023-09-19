@@ -32,6 +32,11 @@ Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius) :
     brain.addLayer(tha3);
 }
 
+Entity::Entity(const Entity& other) :
+    loc(other.loc), speed_(other.speed_), angle_(other.angle_), radius(other.radius),
+    brain(other.brain), idx(counter++)
+{ }
+
 Entity::~Entity() {
     brain.destroyAll();
 }
@@ -111,17 +116,27 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
 }
 
 EntityPtr Entity::maybeGiveBirth() {
-    if (shouldGiveBirth()) {
-
+    // if (shouldGiveBirth()) {
+    if (random() % 50 == 3) {
+        EntityPtr child = this->clone();
+        return child;
     }
     return nullptr;
-    // TODO we were here-ish
 }
 
 /********** Toref *************/
 
+Toref::Toref(const Toref& other) :
+    Entity(other)
+{ }
+
 void Toref::onEnergyDepleted() {
     die();
+}
+
+EntityPtr Toref::clone() const {
+    EntityPtr newToref = (std::make_shared<Toref>(*this));
+    return newToref;
 }
 
 bool Toref::shouldGiveBirth() const {
@@ -145,6 +160,16 @@ void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
 }
 
 /********** Tarif *************/
+
+EntityPtr Tarif::clone() const {
+    EntityPtr newTarif = std::make_shared<Tarif>(*this);
+    return newTarif;
+}
+
+Tarif::Tarif(const Tarif& other) :
+    Entity(other)
+{ }
+
 void Tarif::onEnergyDepleted() {
     state = State::INACTIVE; // TODO: do we need this INACTIVE?
     if (restIterations == whenCanMove) {

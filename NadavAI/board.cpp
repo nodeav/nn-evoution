@@ -51,6 +51,7 @@ void Board::moveAll() {
             EntityPtr possibleEntity = entity->maybeGiveBirth();
             if (possibleEntity) {
                 std::lock_guard<std::mutex> guard(mut);
+                std::cout << entity->idx << " gave birth to " << possibleEntity->idx << std::endl;
                 newEntities.push_back(possibleEntity);
             }
         }));
