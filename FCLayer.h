@@ -25,6 +25,8 @@ public:
     Eigen::MatrixXf forward(Eigen::MatrixXf input) override;
 
     Eigen::MatrixXf backward(const Eigen::MatrixXf outputError, float learningRate) override;
+
+    void mutate() override;
 };
 
 #endif //NN_EVOLUTION_FCLAYER_H

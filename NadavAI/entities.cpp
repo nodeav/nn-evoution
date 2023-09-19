@@ -41,6 +41,11 @@ Entity::~Entity() {
     brain.destroyAll();
 }
 
+void Entity::mutate() {
+    // TODO: only sometimes mutate?
+    brain.mutate();
+}
+
 std::string Entity::toString() const {
     return std::string("{") +
             "idx: " + std::to_string(idx) +
@@ -117,7 +122,8 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
 
 EntityPtr Entity::maybeGiveBirth() {
     if (shouldGiveBirth()) {
-        EntityPtr child = this->clone();
+        EntityPtr child = clone();
+        child->mutate();
         return child;
     }
     return nullptr;
@@ -139,7 +145,7 @@ EntityPtr Toref::clone() const {
 }
 
 bool Toref::shouldGiveBirth() {
-    if (ate > 3) {
+    if (ate > 1) {
         ate = 0;
         return true;
     }

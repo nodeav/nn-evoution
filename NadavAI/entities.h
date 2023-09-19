@@ -46,8 +46,9 @@ protected:
     NeuralNet brain;
     energy_t energy = 1;
     State state = State::ACTIVE;
-
     bool isActive() const;
+    void mutate();
+
 public:
     int idx = 0;
     Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size);

@@ -27,6 +27,8 @@ public:
     virtual Eigen::MatrixXf forward(Eigen::MatrixXf input) = 0;
 
     virtual Eigen::MatrixXf backward(Eigen::MatrixXf error, float learningRate) = 0;
+
+    virtual void mutate() {};
 };
 
 

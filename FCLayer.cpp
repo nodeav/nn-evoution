@@ -1,5 +1,7 @@
 #include "FCLayer.h"
 #include <iostream>
+#include <random>
+#include <functional>
 
 Eigen::MatrixXf FCLayer::forward(Eigen::MatrixXf input) {
     lastInput = input;
@@ -33,4 +35,17 @@ FCLayer::FCLayer(const FCLayer& other)
 
 Layer* FCLayer::clone() {
     return new FCLayer(*this);
+}
+
+float sample (float source) {
+    static thread_local std::random_device rd{};
+    static thread_local std::mt19937 gen{rd()};
+    static thread_local std::normal_distribution d{0.0, 0.1};
+    auto random = d(gen);
+    return (source + random);
+}
+
+void FCLayer::mutate() {
+    bias = bias.unaryExpr(&sample);
+    weights = weights.unaryExpr(&sample);
 }

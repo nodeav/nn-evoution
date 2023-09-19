@@ -26,6 +26,12 @@ void NeuralNet::addLayer(Layer *layer) {
     layers.emplace_back(layer);
 }
 
+void NeuralNet::mutate() {
+    for (auto layer: layers) {
+        layer->mutate();
+    }
+}
+
 Eigen::MatrixXf NeuralNet::predict(const Eigen::MatrixXf &input) {
     auto x = [](Eigen::MatrixXf x) {};
     return predict(input, x);

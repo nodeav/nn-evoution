@@ -31,6 +31,8 @@ public:
     size_t layersNum() const;
 
     void destroyAll();
+
+    void mutate();
 };
 
 

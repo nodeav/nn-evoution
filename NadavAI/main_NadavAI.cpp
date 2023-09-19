@@ -14,7 +14,7 @@
 
 
 Up Next:
-1. implement energy
+1. implement energy                       V
     a. for toref:
         i.  if depleted -> die            V
         ii. to gain energy -> eat         V
@@ -23,15 +23,15 @@ Up Next:
         i.  if depleted -> don't move     V
         ii. to gain energy -> wait        V
 
-2. implement birth mechanism
+2. implement birth mechanism              V
     a. copy                               V
-        a. for tarif - if age > 30
-        b. for toref - if ate 3 entities
+        a. for tarif - if age > 90        V
+        b. for toref - if ate 3 entities  V
     b. mutate
 
 3. adjust smart evolution:
     a. copying the net to child           V
-    b. add a mutation
+    b. add a mutation                     V
 
 4. implement cooldown for toref after eating
 
