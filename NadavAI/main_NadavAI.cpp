@@ -24,9 +24,9 @@ Up Next:
         ii. to gain energy -> wait        V
 
 2. implement birth mechanism
-    a. copy
-        a. for tarif - if full energy
-        b. for toref - if ate 2 entities
+    a. copy                               V
+        a. for tarif - if age > 30
+        b. for toref - if ate 3 entities
     b. mutate
 
 3. adjust smart evolution:

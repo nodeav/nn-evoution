@@ -116,8 +116,7 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
 }
 
 EntityPtr Entity::maybeGiveBirth() {
-    // if (shouldGiveBirth()) {
-    if (random() % 50 == 3) {
+    if (shouldGiveBirth()) {
         EntityPtr child = this->clone();
         return child;
     }
@@ -139,8 +138,12 @@ EntityPtr Toref::clone() const {
     return newToref;
 }
 
-bool Toref::shouldGiveBirth() const {
-    return true;
+bool Toref::shouldGiveBirth() {
+    if (ate > 3) {
+        ate = 0;
+        return true;
+    }
+    return false;
 }
 
 void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
@@ -155,6 +158,7 @@ void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
             std::cout << idx << ": I ate " << result.entity->idx << std::endl;
             energy = 1; // TODO: reset energy
             result.entity->die();
+            ++ate;
         }
     }
 }
@@ -172,12 +176,12 @@ Tarif::Tarif(const Tarif& other) :
 
 void Tarif::onEnergyDepleted() {
     state = State::INACTIVE; // TODO: do we need this INACTIVE?
-    if (restIterations == whenCanMove) {
+    if (restForMoveIterations == whenCanMove) {
         state = State::ACTIVE;
         energy = 1; // TODO: make better energy
-        restIterations = 0;
+        restForMoveIterations = 0;
     } else {
-        ++restIterations;
+        ++restForMoveIterations;
     }
 }
 
@@ -185,6 +189,11 @@ void Tarif::maybeEat(std::vector<EntityDistanceResult> entities) {
     return;
 }
 
-bool Tarif::shouldGiveBirth() const{
-    return true;
+bool Tarif::shouldGiveBirth() {
+    if (waitForBirthIterations == whenCanGiveBirth) {
+        waitForBirthIterations = 0;
+        return true;
+    }
+    ++waitForBirthIterations;
+    return false;
 }

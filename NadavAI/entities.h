@@ -48,7 +48,6 @@ protected:
     State state = State::ACTIVE;
 
     bool isActive() const;
-    virtual bool shouldGiveBirth() const = 0;
 public:
     int idx = 0;
     Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size);
@@ -72,6 +71,7 @@ public:
     void die();
     bool isDead() const;
     EntityPtr maybeGiveBirth();
+    virtual bool shouldGiveBirth() = 0;
 };
 
 struct EntityDistanceResult {
@@ -109,9 +109,9 @@ public:
     EntityType getType() const override { return EntityType::TOREF; }
 
 private:
-    bool shouldGiveBirth() const override;
+    bool shouldGiveBirth() override;
     EntityPtr clone() const override;
-
+    uint8_t ate = 0;
 };
 
 class Tarif : public Entity {
@@ -125,8 +125,10 @@ public:
     EntityType getType() const override { return EntityType::TARIF; }
 
 private:
-    uint32_t restIterations = 0;
+    uint32_t restForMoveIterations = 0;
+    uint32_t waitForBirthIterations = 0;
     static const uint32_t whenCanMove = 60;
-    bool shouldGiveBirth() const override;
+    static const uint32_t whenCanGiveBirth = 90;
+    bool shouldGiveBirth() override;
     EntityPtr clone() const override;
 };

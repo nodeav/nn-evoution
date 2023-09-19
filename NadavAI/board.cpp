@@ -68,6 +68,7 @@ void Board::moveAll() {
     );
 
     entities.insert(entities.end(), newEntities.begin(), newEntities.end());
+    ++gen;
 }
 
 std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entity) {
