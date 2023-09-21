@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <random>
 #include "FCLayer.h"
 #include "FlattenLayer.h"
 #include "THALayer.h"
@@ -15,7 +16,7 @@ Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius) :
         loc(x, y), speed_(speed), angle_(angle), radius(radius), idx(counter++) {
 
     FlattenLayer* flatten = new FlattenLayer({entitySize, entityNum}); // TODO: verify the order of this vs acknowledgeEntities
-    FCLayer* fc1 = new FCLayer(flatten->outputSize, 4);
+    FCLayer* fc1 = new FCLayer(flatten->outputSize, 8);
     FCLayer* fc2 = new FCLayer(fc1->outputSize, 4);
     FCLayer* fc3 = new FCLayer(fc2->outputSize, controlSize);
     auto tha0 = new THALayer();
@@ -112,18 +113,22 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
     // tanh is in range [-1, 1]
     // convert to [0, 1]
     auto normalize_tanh = [](auto n) {
-        return (n + 1) / 2;
+        return (n + 1.f) / 2.f;
     };
 
-    speed_ = normalize_tanh(out(0)) / 50; // TODO: normalize prettier
+    speed_ = normalize_tanh(out(0)) / 30; // TODO: normalize prettier
     angle_ = normalize_tanh(out(1)) * 2 * M_PI;
     // std::cout << "Net's output is speed: " << speed_ << " angle: " << angle_.value() << std::endl;
 }
 
 EntityPtr Entity::maybeGiveBirth() {
+    static thread_local std::random_device rd{};
+    static thread_local std::mt19937 gen{rd()};
+    static thread_local std::normal_distribution d{0.0, 0.01};
     if (shouldGiveBirth()) {
         EntityPtr child = clone();
         child->mutate();
+        child->loc += Location(d(gen), d(gen));
         return child;
     }
     return nullptr;
@@ -145,7 +150,7 @@ EntityPtr Toref::clone() const {
 }
 
 bool Toref::shouldGiveBirth() {
-    if (ate > 1) {
+    if (ate > 3) {
         ate = 0;
         return true;
     }
@@ -160,9 +165,9 @@ void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
         if (result.entity->isDead() || result.entity->getType() == EntityType::TOREF) {
             continue;
         }
-        if (result.distanceToEntity < 0.02) { // TODO: move to const
+        if (result.distanceToEntity < 0.002) { // TODO: move to const
             std::cout << idx << ": I ate " << result.entity->idx << std::endl;
-            energy = 1; // TODO: reset energy
+            energy = std::min(energy + 0.5, 2.); // TODO: reset energy
             result.entity->die();
             ++ate;
         }
@@ -184,7 +189,7 @@ void Tarif::onEnergyDepleted() {
     state = State::INACTIVE; // TODO: do we need this INACTIVE?
     if (restForMoveIterations == whenCanMove) {
         state = State::ACTIVE;
-        energy = 1; // TODO: make better energy
+        energy = 2; // TODO: make better energy
         restForMoveIterations = 0;
     } else {
         ++restForMoveIterations;

@@ -9,7 +9,7 @@
 Board::Board(float row, float col) {
     this->rows = row;
     this->cols = col;
-    threadPool = std::make_unique<ThreadPool>(12);
+    threadPool = std::make_unique<ThreadPool>(22);
 }
 
 void Board::addEntity(EntityPtr entity) {
@@ -82,9 +82,9 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
     std::unordered_map<int, EntityDistanceResult> inSight;
 
     for (const auto& otherEntity: entities) {
-        if (entity == otherEntity) {
-            continue;
-        }
+//        if (entity == otherEntity) {
+//            continue;
+//        }
 
         distance_t distSquared = getDistanceSquared(entity->location(), otherEntity->location());
         auto maxDist = entity->maxSightDistance();

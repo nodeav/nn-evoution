@@ -39,12 +39,12 @@ private:
     Radian angle_;
     radius_t radius;
     distance_t maxSightDistance_ = 5;
-    Radian fieldOfView_ = 0.5;
+    Radian fieldOfView_ = 1.0;
     virtual EntityPtr clone() const = 0;
 
 protected:
     NeuralNet brain;
-    energy_t energy = 1;
+    energy_t energy = 2;
     State state = State::ACTIVE;
     bool isActive() const;
     void mutate();
@@ -129,7 +129,7 @@ private:
     uint32_t restForMoveIterations = 0;
     uint32_t waitForBirthIterations = 0;
     static const uint32_t whenCanMove = 60;
-    static const uint32_t whenCanGiveBirth = 90;
+    static const uint32_t whenCanGiveBirth = 20;
     bool shouldGiveBirth() override;
     EntityPtr clone() const override;
 };

@@ -5,7 +5,7 @@
 #include <thread>
 #include <chrono>
 
-constexpr int num_entities = 500;
+constexpr int num_entities = 2000;
 
 void initBoard(Board &board) {
     std::random_device r;
@@ -14,15 +14,22 @@ void initBoard(Board &board) {
     std::uniform_real_distribution<loc_t> radian_dist(0, 2.0 * M_PI);
     std::uniform_real_distribution<loc_t> speed_dist(0.005, 0.01);
 
+    auto percent_tarif = 0.8;
 
-    for (uint32_t i = 0; i < num_entities / 2; i++) {
+    for (uint32_t i = 0; i < num_entities * percent_tarif; i++) {
         loc_t x = loc_dist(e1);
         loc_t y = loc_dist(e1);
         speed_t speed = speed_dist(e1);
         Radian radian = radian_dist(e1);
-
-        board.addEntity(std::make_shared<Toref>(x, y, speed, radian, 2 /* radius */));
         board.addEntity(std::make_shared<Tarif>(x, y, speed, radian, 2 /* radius */));
+    }
+
+    for (auto i = 0; i < num_entities * (1 - percent_tarif); i++) {
+        loc_t x = loc_dist(e1);
+        loc_t y = loc_dist(e1);
+        speed_t speed = speed_dist(e1);
+        Radian radian = radian_dist(e1);
+        board.addEntity(std::make_shared<Toref>(x, y, speed, radian, 2 /* radius */));
     }
 
 }
@@ -34,10 +41,19 @@ int main(int argc, char **argv) {
         Board board(1, 1);
         initBoard(board);
         while (run) {
-            using namespace std::chrono_literals;
+//            using namespace std::chrono_literals;
+//            std::chrono::steady_clock::time_point begin;
             board.moveAll();
             vis.updateAgentList(board);
-            std::this_thread::sleep_for(30ms);
+            if (board.getEntities().empty()) {
+                std::cout << "simulation done with gen " << board.gen << std::endl;
+                vis.stopVizLoop();
+                break;
+            }
+//            std::chrono::steady_clock::time_point end;
+//            auto elapsed = end - begin;
+//            auto sleep = 15ms - elapsed;
+//            std::this_thread::sleep_for(sleep);
         }
     });
     thread.detach();
