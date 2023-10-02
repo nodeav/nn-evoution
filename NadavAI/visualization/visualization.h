@@ -12,13 +12,17 @@
 
 constexpr int SPRITE_CYCLE_LEN = 3;
 constexpr int SPRITE_SIZE = 48;
-constexpr int AGENT_SIZE = 96;
+constexpr int AGENT_SIZE = 36;
 
 constexpr int WINDOW_WIDTH = 1024;
 constexpr int WINDOW_HEIGHT = 1024;
 
 enum class Direction {
     right, left, up, down
+};
+
+enum class Type {
+    cat, mouse
 };
 
 class Agent {
@@ -33,6 +37,7 @@ public:
     int sprite_direction() const;
 
     static Direction radiansToDirection(Radian angle);
+    Type type;
 };
 
 // TODO: this is a realtime-only visualization
@@ -42,8 +47,10 @@ class Visualizer {
     int change_direction_counter = 0;
     SDL_Window *window;
     SDL_Renderer *renderer;
-    SDL_Surface *image;
-    SDL_Texture *texture;
+    SDL_Surface *cats_image;
+    SDL_Surface *mice_image;
+    SDL_Texture *cats_texture;
+    SDL_Texture *mice_texture;
     std::vector<Agent> agents;
     static bool initialized;
     std::mutex agents_lock;
