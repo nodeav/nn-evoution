@@ -12,9 +12,9 @@ void initBoard(Board &board) {
     std::default_random_engine e1(r());
     std::uniform_real_distribution<loc_t> loc_dist(0, 1);
     std::uniform_real_distribution<loc_t> radian_dist(0, 2.0 * M_PI);
-    std::uniform_real_distribution<loc_t> speed_dist(0.005, 0.01);
+    std::uniform_real_distribution<loc_t> speed_dist(0.003, 0.03);
 
-    auto percent_tarif = 0.8;
+    auto percent_tarif = 0.5;
 
     for (uint32_t i = 0; i < num_entities * percent_tarif; i++) {
         loc_t x = loc_dist(e1);

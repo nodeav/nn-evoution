@@ -16,8 +16,8 @@ Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius) :
         loc(x, y), speed_(speed), angle_(angle), radius(radius), idx(counter++) {
 
     FlattenLayer* flatten = new FlattenLayer({entitySize, entityNum}); // TODO: verify the order of this vs acknowledgeEntities
-    FCLayer* fc1 = new FCLayer(flatten->outputSize, 8);
-    FCLayer* fc2 = new FCLayer(fc1->outputSize, 4);
+    FCLayer* fc1 = new FCLayer(flatten->outputSize, 64);
+    FCLayer* fc2 = new FCLayer(fc1->outputSize, 32);
     FCLayer* fc3 = new FCLayer(fc2->outputSize, controlSize);
     auto tha0 = new THALayer();
     auto tha1 = new THALayer();
@@ -70,7 +70,7 @@ void Entity::moveInBoundries(Location boundary) {
     loc += boundary; // TODO: do we need this?????
     loc %= boundary;
 
-    energy -= speed_;
+    energy -= std::max(0.005f, speed_);
 }
 
 bool Entity::isActive() const {
@@ -83,7 +83,6 @@ bool Entity::isDead() const {
 
 void Entity::die() {
     state = State::DEAD;
-    std::cout << idx << ": I died" << std::endl;
 }
 
 void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
@@ -99,11 +98,11 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
 
     Eigen::MatrixXf netInput(entityNum, entitySize);
     for (int i = 0; i < resultsToUse; ++i) {
-        netInput.row(i) = Eigen::Map<Eigen::Vector3f>(results[i].toRow().data());
+        netInput.row(i) = Eigen::Map<Eigen::Vector4f>(results[i].toRow().data());
     }
 
     for (int i = resultsToUse; i < entityNum; ++i) {
-        netInput.row(i) = Eigen::Map<Eigen::Vector3f>(EntityDistanceResult::emptyRow().data());
+        netInput.row(i) = Eigen::Map<Eigen::Vector4f>(EntityDistanceResult::emptyRow().data());
     }
     auto out = brain.predict(netInput);
 
@@ -113,7 +112,7 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
     // tanh is in range [-1, 1]
     // convert to [0, 1]
     auto normalize_tanh = [](auto n) {
-        return (n + 1.f) / 2.f;
+        return ((n + 1) / 2);
     };
 
     speed_ = normalize_tanh(out(0)) / 30; // TODO: normalize prettier
@@ -150,7 +149,7 @@ EntityPtr Toref::clone() const {
 }
 
 bool Toref::shouldGiveBirth() {
-    if (ate > 3) {
+    if (ate > 2) {
         ate = 0;
         return true;
     }
@@ -165,8 +164,7 @@ void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
         if (result.entity->isDead() || result.entity->getType() == EntityType::TOREF) {
             continue;
         }
-        if (result.distanceToEntity < 0.002) { // TODO: move to const
-            std::cout << idx << ": I ate " << result.entity->idx << std::endl;
+        if (result.distanceToEntity < 0.0045) { // TODO: move to const
             energy = std::min(energy + 0.5, 2.); // TODO: reset energy
             result.entity->die();
             ++ate;

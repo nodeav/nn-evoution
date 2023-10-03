@@ -9,7 +9,7 @@
 Board::Board(float row, float col) {
     this->rows = row;
     this->cols = col;
-    threadPool = std::make_unique<ThreadPool>(22);
+    threadPool = std::make_unique<ThreadPool>(23);
 }
 
 void Board::addEntity(EntityPtr entity) {
@@ -50,8 +50,14 @@ void Board::moveAll() {
             entity->moveInBoundries({cols, rows});
             EntityPtr possibleEntity = entity->maybeGiveBirth();
             if (possibleEntity) {
+                switch (entity->getType()) {
+                    case EntityType::TARIF:
+                        this->tarifs_born++;
+                        break;
+                    case EntityType::TOREF:
+                        this->torefs_born++;
+                }
                 std::lock_guard<std::mutex> guard(mut);
-                std::cout << entity->idx << " gave birth to " << possibleEntity->idx << std::endl;
                 newEntities.push_back(possibleEntity);
             }
         }));
@@ -62,13 +68,24 @@ void Board::moveAll() {
     }
 
     entities.erase(
-        std::remove_if(entities.begin(), entities.end(), [] (auto ent) {
-            return ent->isDead();
+        std::remove_if(entities.begin(), entities.end(), [&] (auto ent) {
+            if (!ent->isDead()) {
+                return false;
+            }
+            switch (ent->getType()) {
+                case EntityType::TARIF:
+                    this->tarifs_eaten++;
+                    break;
+                case EntityType::TOREF:
+                    this->torefs_died++;
+            }
+            return true;
         }), entities.end()
     );
 
     entities.insert(entities.end(), newEntities.begin(), newEntities.end());
-    ++gen;
+    std::cout << "[gen " << ++gen << "] torefs died: " << torefs_died << ", torefs born: " << torefs_born <<
+        ", tarifs eaten: " << tarifs_eaten << ", tarifs born: " << tarifs_born << std::endl;
 }
 
 std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entity) {

@@ -11,7 +11,7 @@ typedef float speed_t;
 typedef float radius_t;
 typedef float energy_t;
 
-constexpr int entitySize = 3; // speed, angle, distance
+constexpr int entitySize = 4; // speed, angle, distance, type
 constexpr int entityNum = 16;
 constexpr int controlSize = 2;  // angle, speed
 
@@ -38,8 +38,8 @@ private:
     speed_t speed_; // distance per frame? TBD
     Radian angle_;
     radius_t radius;
-    distance_t maxSightDistance_ = 5;
-    Radian fieldOfView_ = 1.0;
+    distance_t maxSightDistance_ = 0.1;
+    Radian fieldOfView_ = 2.0;
     virtual EntityPtr clone() const = 0;
 
 protected:
@@ -91,10 +91,11 @@ struct EntityDistanceResult {
     Radian angleToEntity;
     distance_t distanceToEntity;
     std::array<float, entitySize> toRow() const { // TODO: add entity type
-        return {entity->speed(), angleToEntity.value(), distanceToEntity};
+        auto t = static_cast<float>(entity->getType());
+        return {entity->speed(), angleToEntity.value(), distanceToEntity, t};
     }
     static std::array<float, entitySize> emptyRow() { // TODO: add entity type
-        return {0, 0, 0};
+        return {0, 0, 0, 0};
     }
 };
 
@@ -128,8 +129,8 @@ public:
 private:
     uint32_t restForMoveIterations = 0;
     uint32_t waitForBirthIterations = 0;
-    static const uint32_t whenCanMove = 60;
-    static const uint32_t whenCanGiveBirth = 20;
+    static const uint32_t whenCanMove = 15;
+    static const uint32_t whenCanGiveBirth = 50;
     bool shouldGiveBirth() override;
     EntityPtr clone() const override;
 };

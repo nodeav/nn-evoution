@@ -12,7 +12,7 @@
 
 constexpr int SPRITE_CYCLE_LEN = 3;
 constexpr int SPRITE_SIZE = 48;
-constexpr int AGENT_SIZE = 36;
+constexpr int AGENT_SIZE = 24;
 
 constexpr int WINDOW_WIDTH = 1024;
 constexpr int WINDOW_HEIGHT = 1024;
