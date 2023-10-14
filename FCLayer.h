@@ -5,6 +5,7 @@
 #include "Layer.h"
 
 class FCLayer : public Layer {
+    static bool FIRST_INIT;
 public:
     Eigen::MatrixXf weights;
     Eigen::MatrixXf bias;

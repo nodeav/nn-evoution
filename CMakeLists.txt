@@ -27,6 +27,16 @@ target_link_libraries(${TEST_TARGET} ${NeuralNetLib})
 add_executable(eigen_test eigen_test.cpp)
 target_link_libraries(eigen_test Eigen3::Eigen)
 
+option(CAT_GPT_REPRODUCIBLE "Reproducible runs (1 thread, constant seed)" ON)
+
+message(STATUS "Running reproducibly? " ${CAT_GPT_REPRODUCIBLE})
+
+if (${CAT_GPT_REPRODUCIBLE})
+    target_compile_definitions(${NeuralNetLib} PUBLIC CAT_GPT_REPRODUCIBLE)
+endif ()
+
+
+
 # Example(s)
 add_subdirectory(mnist)
 

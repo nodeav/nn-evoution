@@ -8,8 +8,12 @@
 constexpr int num_entities = 2000;
 
 void initBoard(Board &board) {
-    std::random_device r;
-    std::default_random_engine e1(r());
+#ifdef CAT_GPT_REPRODUCIBLE
+    auto rd = []() { return 42; };
+#elif
+    static thread_local std::random_device rd{};
+#endif
+    std::default_random_engine e1(rd());
     std::uniform_real_distribution<loc_t> loc_dist(0, 1);
     std::uniform_real_distribution<loc_t> radian_dist(0, 2.0 * M_PI);
     std::uniform_real_distribution<loc_t> speed_dist(0.003, 0.03);
@@ -35,6 +39,7 @@ void initBoard(Board &board) {
 }
 
 int main(int argc, char **argv) {
+    srand((unsigned int) time(nullptr));
     Visualizer vis;
     bool run = true;
     std::thread thread([&vis, &run]() {

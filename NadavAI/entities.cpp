@@ -121,7 +121,11 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
 }
 
 EntityPtr Entity::maybeGiveBirth() {
+#ifdef CAT_GPT_REPRODUCIBLE
+    auto rd = []() { return 42; };
+#elif
     static thread_local std::random_device rd{};
+#endif
     static thread_local std::mt19937 gen{rd()};
     static thread_local std::normal_distribution d{0.0, 0.01};
     if (shouldGiveBirth()) {

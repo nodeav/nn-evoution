@@ -1,7 +1,8 @@
 #include "FCLayer.h"
-#include <iostream>
 #include <random>
 #include <functional>
+
+bool FCLayer::FIRST_INIT = false;
 
 Eigen::MatrixXf FCLayer::forward(Eigen::MatrixXf input) {
     lastInput = input;
@@ -23,6 +24,12 @@ FCLayer::FCLayer(std::size_t inputCols, std::size_t outputCols) :
 FCLayer::FCLayer(Eigen::Vector2i inputSize, int outputCols)
 : Layer({inputSize.x(), inputSize.y()},
         {outputCols, inputSize.y()}) {
+#ifdef CAT_GPT_REPRODUCIBLE
+    if (!FIRST_INIT) {
+        srand(5);
+        FIRST_INIT = true;
+    }
+#endif
     weights.setRandom(inputSize.x(), outputCols);
     bias.setRandom(inputSize.y(), outputCols);
 }
@@ -38,7 +45,11 @@ Layer* FCLayer::clone() {
 }
 
 float sample (float source) {
+#ifdef CAT_GPT_REPRODUCIBLE
+    auto rd = []() { return 42; };
+#elif
     static thread_local std::random_device rd{};
+#endif
     static thread_local std::mt19937 gen{rd()};
     static thread_local std::normal_distribution d{0.0, 0.005};
     auto random = d(gen);

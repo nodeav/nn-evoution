@@ -9,7 +9,12 @@
 Board::Board(float row, float col) {
     this->rows = row;
     this->cols = col;
-    threadPool = std::make_unique<ThreadPool>(23);
+#ifdef CAT_GPT_REPRODUCIBLE
+    auto num_threads = 1;
+#elif
+    auto num_threads = 23;
+#endif
+    threadPool = std::make_unique<ThreadPool>(num_threads);
 }
 
 void Board::addEntity(EntityPtr entity) {
