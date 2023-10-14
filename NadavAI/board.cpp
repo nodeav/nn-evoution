@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include "utils.h"
 
-
 Board::Board(float row, float col) {
     this->rows = row;
     this->cols = col;
@@ -36,7 +35,7 @@ void Board::moveAll() {
 
     for (auto& entity : entities) {
         futures.push_back(threadPool->enqueue([&]() {
-            std::vector<EntityDistanceResult> entitiesInFov = getEntitiesInFov(entity);
+            std::vector<EntityDistanceResult> entitiesInFov = getEntitiesInFov(entity, entityNum);
             entity->maybeEat(entitiesInFov);
             entity->acknowledgeEntities(entitiesInFov);
         }));
@@ -93,7 +92,7 @@ void Board::moveAll() {
         ", tarifs eaten: " << tarifs_eaten << ", tarifs born: " << tarifs_born << std::endl;
 }
 
-std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entity) {
+std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr &entity, const int numEntities) {
     Radian fovPart = entity->fieldOfView() / 2;
     Radian fovStart = entity->angle() - fovPart;
     Radian fovEnd = entity->angle() + fovPart;
@@ -103,18 +102,28 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
     // TODO: hash with something vaguer than float
     std::unordered_map<int, EntityDistanceResult> inSight;
 
-    for (const auto& otherEntity: entities) {
+    auto maxDist = entity->maxSightDistance();
+    auto maxDistSquared = maxDist * maxDist;
+    // just another filter; it's very much imperfect, but can filter out some of the entities
+    distance_t largestDistanceSquared = 0;
+    auto entityLocation = entity->location();
+    for (const auto &otherEntity: entities) {
 //        if (entity == otherEntity) {
 //            continue;
 //        }
 
-        distance_t distSquared = getDistanceSquared(entity->location(), otherEntity->location());
-        auto maxDist = entity->maxSightDistance();
-        if (distSquared > (maxDist * maxDist)) {
+        distance_t distSquared = getDistanceSquared(entityLocation, otherEntity->location());
+        if (distSquared > maxDistSquared) {
             continue;
         }
 
-        Radian angle = getAngle(entity->location(), otherEntity->location());
+        // TODO: is this worth it?
+        // don't proceed if we have enough entities and this one is further away than others
+        if (distSquared > maxDistSquared && inSight.size() >= numEntities) {
+            continue;
+        }
+
+        Radian angle = getAngle(entityLocation, otherEntity->location());
         auto intAngle = angle.toIntDegrees();
 
         if (!angle.between(fovStart, fovEnd)) {
@@ -123,6 +132,7 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
 
         auto sawEntity = inSight.find(intAngle);
         if (sawEntity == inSight.end() || distSquared < sawEntity->second.distanceToEntity) {
+            largestDistanceSquared = std::max(largestDistanceSquared, distSquared);
             inSight[intAngle] = {otherEntity, angle, distSquared};
         }
     }
