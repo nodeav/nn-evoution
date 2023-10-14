@@ -40,19 +40,25 @@ void initBoard(Board &board) {
 
 int main(int argc, char **argv) {
     srand((unsigned int) time(nullptr));
+    timer main("main");
+    int max_iters = -1;
+    if (argc > 1) {
+        max_iters = static_cast<int>(std::strtol(argv[1], nullptr, 10));
+        std::cout << "will run " << max_iters << " iterations" << std::endl;
+    }
+
     Visualizer vis;
     bool run = true;
-    std::thread thread([&vis, &run]() {
+    std::thread thread([&vis, &run, &max_iters]() {
         Board board(1, 1);
         initBoard(board);
-        while (run) {
+        while (run && max_iters--) {
 //            using namespace std::chrono_literals;
 //            std::chrono::steady_clock::time_point begin;
             board.moveAll();
             vis.updateAgentList(board);
             if (board.getEntities().empty()) {
                 std::cout << "simulation done with gen " << board.gen << std::endl;
-                vis.stopVizLoop();
                 break;
             }
 //            std::chrono::steady_clock::time_point end;
@@ -60,6 +66,7 @@ int main(int argc, char **argv) {
 //            auto sleep = 15ms - elapsed;
 //            std::this_thread::sleep_for(sleep);
         }
+        vis.stopVizLoop();
     });
     thread.detach();
     vis.startVizLoop();
