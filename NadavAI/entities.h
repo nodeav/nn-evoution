@@ -119,6 +119,7 @@ private:
     bool shouldGiveBirth() override;
     EntityPtr clone() const override;
     uint8_t ate = 0;
+    uint16_t birth_cooldown = 0;
 };
 
 class Tarif : public Entity {

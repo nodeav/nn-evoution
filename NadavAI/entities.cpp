@@ -12,6 +12,8 @@
 
 int Entity::counter = 0;
 
+constexpr auto TOREF_POST_BIRTH_MEAL_COOLDOWN = 10;
+
 Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius) :
         loc(x, y), speed_(speed), angle_(angle), radius(radius), idx(counter++) {
 
@@ -156,6 +158,7 @@ EntityPtr Toref::clone() const {
 bool Toref::shouldGiveBirth() {
     if (ate > 2) {
         ate = 0;
+        birth_cooldown = TOREF_POST_BIRTH_MEAL_COOLDOWN;
         return true;
     }
     return false;
@@ -165,6 +168,12 @@ void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
     if (!isActive()) { // TODO: WHY?
         return;
     }
+
+    if (birth_cooldown != 0) {
+        birth_cooldown--;
+        return;
+    }
+
     for (auto& result : results) {
         if (result.entity->isDead() || result.entity->getType() == EntityType::TOREF) {
             continue;
@@ -173,6 +182,7 @@ void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
             energy = std::min(energy + 0.5, 2.); // TODO: reset energy
             result.entity->die();
             ++ate;
+            break;
         }
     }
 }
