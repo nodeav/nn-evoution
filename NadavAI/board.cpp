@@ -10,7 +10,7 @@ Board::Board(float row, float col) {
     this->cols = col;
 #ifdef CAT_GPT_REPRODUCIBLE
     auto num_threads = 1;
-#elif
+#else
     auto num_threads = 23;
 #endif
     threadPool = std::make_unique<ThreadPool>(num_threads);
