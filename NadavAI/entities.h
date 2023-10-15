@@ -90,6 +90,11 @@ struct EntityDistanceResult {
     EntityPtr entity;
     Radian angleToEntity;
     distance_t distanceToEntity;
+
+    bool operator>(EntityDistanceResult& other) const {
+        return distanceToEntity > other.distanceToEntity;
+    }
+
     std::array<float, entitySize> toRow() const { // TODO: add entity type
         auto t = static_cast<float>(entity->getType());
         return {entity->speed(), angleToEntity.value(), distanceToEntity, t};

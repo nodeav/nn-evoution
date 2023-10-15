@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include "utils.h"
+#include <queue>
 
 Board::Board(float row, float col) {
     this->rows = row;
@@ -97,8 +98,6 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr &entit
     Radian fovStart = entity->angle() - fovPart;
     Radian fovEnd = entity->angle() + fovPart;
 
-    std::vector<EntityDistanceResult> ret;
-
     // TODO: hash with something vaguer than float
     std::unordered_map<int, EntityDistanceResult> inSight;
 
@@ -137,9 +136,26 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr &entit
         }
     }
 
+    // top should be closest
+    std::priority_queue<EntityDistanceResult, std::vector<EntityDistanceResult>, std::greater<>> heap;
+    auto furthest_result = static_cast<distance_t>(INT_MIN);
     for (auto& [angle, entityDist] : inSight) {
-        entityDist.distanceToEntity = sqrtf(entityDist.distanceToEntity);
-        ret.emplace_back(entityDist);
+        if (heap.size() >= numEntities) {
+            if (entityDist.distanceToEntity > furthest_result) {
+                continue;
+            }
+        }
+        furthest_result = std::max(furthest_result, entityDist.distanceToEntity);
+        heap.emplace(entityDist);
     }
+
+    std::vector<EntityDistanceResult> ret;
+    while (!heap.empty() && ret.size() < numEntities) {
+        auto result = heap.top();
+        result.distanceToEntity = sqrtf(result.distanceToEntity);
+        ret.emplace_back(result);
+        heap.pop();
+    }
+
     return ret;
 }

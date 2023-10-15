@@ -89,9 +89,10 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
     if (!isActive()) {
         return;
     }
-    std::sort(results.begin(), results.end(), [](auto a, auto b) {
-                                                return (a.distanceToEntity < b.distanceToEntity);
-                                                });
+    // Now using a heap, so the results should be sorted
+//    std::sort(results.begin(), results.end(), [](auto a, auto b) {
+//                                                return (a.distanceToEntity < b.distanceToEntity);
+//                                                });
     assert(entityNum > 0);
 
     size_t resultsToUse = std::min(static_cast<size_t>(entityNum), results.size());
