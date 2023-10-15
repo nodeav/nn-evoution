@@ -10,7 +10,7 @@ constexpr int num_entities = 2000;
 void initBoard(Board &board) {
 #ifdef CAT_GPT_REPRODUCIBLE
     auto rd = []() { return 42; };
-#elif
+#else
     static thread_local std::random_device rd{};
 #endif
     std::default_random_engine e1(rd());
