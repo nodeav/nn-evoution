@@ -24,3 +24,4 @@ else()
 endif()
 
 configure_file(cats-fluffy.png cats-fluffy.png COPYONLY)
+configure_file(mice-fluffy.png mice-fluffy.png COPYONLY)

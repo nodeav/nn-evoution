@@ -5,7 +5,7 @@
 #include <thread>
 #include <chrono>
 
-constexpr int num_entities = 16;
+constexpr int num_entities = 500;
 
 void initBoard(Board &board) {
     std::random_device r;
@@ -15,13 +15,14 @@ void initBoard(Board &board) {
     std::uniform_real_distribution<loc_t> speed_dist(0.005, 0.01);
 
 
-    for (uint32_t i = 0; i < num_entities; i++) {
+    for (uint32_t i = 0; i < num_entities / 2; i++) {
         loc_t x = loc_dist(e1);
         loc_t y = loc_dist(e1);
         speed_t speed = speed_dist(e1);
         Radian radian = radian_dist(e1);
 
-        board.addEntity(std::make_shared<Entity>(x, y, speed, radian, 2 /* radius */));
+        board.addEntity(std::make_shared<Toref>(x, y, speed, radian, 2 /* radius */));
+        board.addEntity(std::make_shared<Tarif>(x, y, speed, radian, 2 /* radius */));
     }
 
 }

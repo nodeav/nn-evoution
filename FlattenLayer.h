@@ -11,6 +11,8 @@ class FlattenLayer : public Layer {
 
 public:
     FlattenLayer(Eigen::Vector2i inputSize);
+
+    Layer* clone() override;
 };
 
 

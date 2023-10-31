@@ -2,6 +2,13 @@
 #include "NeuralNet.h"
 #include <memory>
 
+
+NeuralNet::NeuralNet(const NeuralNet& other) {
+    for (auto& layer : other.layers) {
+        layers.emplace_back(layer->clone());
+    }
+}
+
 size_t NeuralNet::layersNum() const {
     return layers.size();
 }
@@ -17,6 +24,12 @@ void NeuralNet::addLayer(Layer *layer) {
 //        assert(layer.inputSize == layers[layers.size() - 1]->outputSize);
 //    }
     layers.emplace_back(layer);
+}
+
+void NeuralNet::mutate() {
+    for (auto layer: layers) {
+        layer->mutate();
+    }
 }
 
 Eigen::MatrixXf NeuralNet::predict(const Eigen::MatrixXf &input) {

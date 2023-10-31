@@ -31,7 +31,8 @@ void Board::moveAll() {
 
     for (auto& entity : entities) {
         futures.push_back(threadPool->enqueue([&]() {
-            auto entitiesInFov = getEntitiesInFov(entity);
+            std::vector<EntityDistanceResult> entitiesInFov = getEntitiesInFov(entity);
+            entity->maybeEat(entitiesInFov);
             entity->acknowledgeEntities(entitiesInFov);
         }));
     }
@@ -41,14 +42,33 @@ void Board::moveAll() {
     }
     futures.clear();
 
+    std::vector<EntityPtr> newEntities;
+    std::mutex mut;
+
     for (auto& entity : entities) {
         futures.push_back(threadPool->enqueue([&]() {
             entity->moveInBoundries({cols, rows});
+            EntityPtr possibleEntity = entity->maybeGiveBirth();
+            if (possibleEntity) {
+                std::lock_guard<std::mutex> guard(mut);
+                std::cout << entity->idx << " gave birth to " << possibleEntity->idx << std::endl;
+                newEntities.push_back(possibleEntity);
+            }
         }));
     }
+
     for(const auto& future : futures) {
         future.wait();
     }
+
+    entities.erase(
+        std::remove_if(entities.begin(), entities.end(), [] (auto ent) {
+            return ent->isDead();
+        }), entities.end()
+    );
+
+    entities.insert(entities.end(), newEntities.begin(), newEntities.end());
+    ++gen;
 }
 
 std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entity) {
@@ -74,9 +94,6 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
 
         Radian angle = getAngle(entity->location(), otherEntity->location());
         auto intAngle = angle.toIntDegrees();
-        // as first step, only exact same angle can block the sight
-        // in the next step, we can use the radius of the entity we see
-        // in the next-next step, perspective can be implemented
 
         if (!angle.between(fovStart, fovEnd)) {
             continue;
@@ -84,7 +101,7 @@ std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entit
 
         auto sawEntity = inSight.find(intAngle);
         if (sawEntity == inSight.end() || distSquared < sawEntity->second.distanceToEntity) {
-            inSight[intAngle] = {otherEntity->speed(), angle, distSquared};
+            inSight[intAngle] = {otherEntity, angle, distSquared};
         }
     }
 

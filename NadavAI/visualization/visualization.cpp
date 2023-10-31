@@ -18,6 +18,7 @@ Agent::Agent(const Entity &entity) {
     pos_x = static_cast<int>(entity.location().x() * static_cast<float>(WINDOW_WIDTH));
     pos_y = static_cast<int>(entity.location().y() * static_cast<float>(WINDOW_HEIGHT));
     direction = radiansToDirection(entity.angle());
+    type = (entity.getType() == EntityType::TOREF ? Type::cat : Type::mouse);
 }
 
 
@@ -50,9 +51,13 @@ Visualizer::Visualizer() {
     window = SDL_CreateWindow("SDL2 Sprite Sheets", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH,
                               WINDOW_HEIGHT, 0);
 
-    image = IMG_Load("./cats-fluffy.png");
     renderer = SDL_CreateRenderer(window, -1, 0);
-    texture = SDL_CreateTextureFromSurface(renderer, image);
+
+    cats_image = IMG_Load("./cats-fluffy.png");
+    cats_texture = SDL_CreateTextureFromSurface(renderer, cats_image);
+
+    mice_image = IMG_Load("./mice-fluffy.png");
+    mice_texture = SDL_CreateTextureFromSurface(renderer, mice_image);
 
     SDL_RenderClear(renderer);
 }
@@ -87,7 +92,11 @@ void Visualizer::startVizLoop() {
                 SDL_Rect srcrect = {sprite * SPRITE_SIZE, agent.sprite_direction(), SPRITE_SIZE, SPRITE_SIZE};
                 SDL_Rect dstrect = {agent.pos_x - AGENT_SIZE / 2, agent.pos_y - AGENT_SIZE / 2, AGENT_SIZE, AGENT_SIZE};
 
-                SDL_RenderCopy(renderer, texture, &srcrect, &dstrect);
+                if (agent.type == Type::cat) {
+                    SDL_RenderCopy(renderer, cats_texture, &srcrect, &dstrect);
+                } else {
+                    SDL_RenderCopy(renderer, mice_texture, &srcrect, &dstrect);
+                }
             }
             SDL_RenderPresent(renderer);
         }
@@ -110,8 +119,10 @@ void Visualizer::startVizLoop() {
 
 Visualizer::~Visualizer() {
     stopVizLoop();
-    SDL_DestroyTexture(texture);
-    SDL_FreeSurface(image);
+    SDL_DestroyTexture(cats_texture);
+    SDL_DestroyTexture(mice_texture);
+    SDL_FreeSurface(cats_image);
+    SDL_FreeSurface(mice_image);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     IMG_Quit();

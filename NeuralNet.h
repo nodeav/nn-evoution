@@ -6,9 +6,13 @@
 
 //template<typename In=float*, typename Out=float>
 class NeuralNet {
+
     std::vector<Layer *> layers;
 
 public:
+    NeuralNet() {}
+    NeuralNet(const NeuralNet& other);
+
     void addLayer(Layer *layer);
 
     Eigen::MatrixXf predict(const Eigen::MatrixXf &input);
@@ -27,6 +31,8 @@ public:
     size_t layersNum() const;
 
     void destroyAll();
+
+    void mutate();
 };
 
 
