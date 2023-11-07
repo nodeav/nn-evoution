@@ -28,7 +28,11 @@ enum class EntityType {
 
 struct EntityDistanceResult;
 class Entity;
+class Toref;
+class Tarif;
 typedef std::shared_ptr<Entity> EntityPtr;
+typedef std::shared_ptr<Toref> TorefPtr;
+typedef std::shared_ptr<Tarif> TarifPtr;
 
 
 class Entity {
@@ -40,7 +44,6 @@ private:
     radius_t radius;
     distance_t maxSightDistance_ = 5;
     Radian fieldOfView_ = 0.5;
-    virtual EntityPtr clone() const = 0;
 
 protected:
     NeuralNet brain;
@@ -71,8 +74,6 @@ public:
     virtual EntityType getType() const = 0;
     void die();
     bool isDead() const;
-    EntityPtr maybeGiveBirth();
-    virtual bool shouldGiveBirth() = 0;
 };
 
 struct EntityDistanceResult {
@@ -108,10 +109,10 @@ public:
     void onEnergyDepleted() override;
     void maybeEat(std::vector<EntityDistanceResult> results) override;
     EntityType getType() const override { return EntityType::TOREF; }
+    TorefPtr maybeGiveBirth();
 
 private:
-    bool shouldGiveBirth() override;
-    EntityPtr clone() const override;
+    TorefPtr clone() const;
     uint8_t ate = 0;
 };
 
@@ -124,12 +125,12 @@ public:
     void onEnergyDepleted() override;
     void maybeEat(std::vector<EntityDistanceResult> results) override;
     EntityType getType() const override { return EntityType::TARIF; }
+    TarifPtr maybeGiveBirth();
 
 private:
     uint32_t restForMoveIterations = 0;
     uint32_t waitForBirthIterations = 0;
     static const uint32_t whenCanMove = 60;
     static const uint32_t whenCanGiveBirth = 90;
-    bool shouldGiveBirth() override;
-    EntityPtr clone() const override;
+    TarifPtr clone() const;
 };

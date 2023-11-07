@@ -21,8 +21,8 @@ void initBoard(Board &board) {
         speed_t speed = speed_dist(e1);
         Radian radian = radian_dist(e1);
 
-        board.addEntity(std::make_shared<Toref>(x, y, speed, radian, 2 /* radius */));
-        board.addEntity(std::make_shared<Tarif>(x, y, speed, radian, 2 /* radius */));
+        board.addToref(std::make_shared<Toref>(x, y, speed, radian, 2 /* radius */));
+        board.addTarif(std::make_shared<Tarif>(x, y, speed, radian, 2 /* radius */));
     }
 
 }

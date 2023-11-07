@@ -120,37 +120,31 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
     // std::cout << "Net's output is speed: " << speed_ << " angle: " << angle_.value() << std::endl;
 }
 
-EntityPtr Entity::maybeGiveBirth() {
-    if (shouldGiveBirth()) {
-        EntityPtr child = clone();
-        child->mutate();
-        return child;
-    }
-    return nullptr;
-}
-
 /********** Toref *************/
 
 Toref::Toref(const Toref& other) :
     Entity(other)
 { }
 
+TorefPtr Toref::maybeGiveBirth() {
+    if (ate > 1) {
+        ate = 0;
+        TorefPtr child = clone();
+        child->mutate();
+        return child;
+    }
+    return nullptr;
+}
+
 void Toref::onEnergyDepleted() {
     die();
 }
 
-EntityPtr Toref::clone() const {
-    EntityPtr newToref = (std::make_shared<Toref>(*this));
+TorefPtr Toref::clone() const {
+    TorefPtr newToref = (std::make_shared<Toref>(*this));
     return newToref;
 }
 
-bool Toref::shouldGiveBirth() {
-    if (ate > 1) {
-        ate = 0;
-        return true;
-    }
-    return false;
-}
 
 void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
     if (!isActive()) { // TODO: WHY?
@@ -171,8 +165,8 @@ void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
 
 /********** Tarif *************/
 
-EntityPtr Tarif::clone() const {
-    EntityPtr newTarif = std::make_shared<Tarif>(*this);
+TarifPtr Tarif::clone() const {
+    TarifPtr newTarif = std::make_shared<Tarif>(*this);
     return newTarif;
 }
 
@@ -195,11 +189,13 @@ void Tarif::maybeEat(std::vector<EntityDistanceResult> entities) {
     return;
 }
 
-bool Tarif::shouldGiveBirth() {
+TarifPtr Tarif::maybeGiveBirth() {
     if (waitForBirthIterations == whenCanGiveBirth) {
         waitForBirthIterations = 0;
-        return true;
+        TarifPtr child = clone();
+        child->mutate();
+        return child;
     }
     ++waitForBirthIterations;
-    return false;
+    return nullptr;
 }

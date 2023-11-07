@@ -12,28 +12,34 @@ Board::Board(float row, float col) {
     threadPool = std::make_unique<ThreadPool>(12);
 }
 
-void Board::addEntity(EntityPtr entity) {
-    entities.emplace_back(entity);
+void Board::addToref(TorefPtr toref) {
+    torfim.emplace_back(toref);
 }
 
-void Board::print() const {
-    for (const auto &entity: entities) {
-        std::cout << entity->toString() << std::endl;
-    }
+void Board::addTarif(TarifPtr tarif) {
+    tarifim.emplace_back(tarif);
 }
-
-bool enablePrint = false;
 
 // todo: prettify
 void Board::moveAll() {
     std::vector<std::future<void>> futures;
-    futures.reserve(entities.size());
+    futures.reserve(tarifim.size() + torfim.size());
 
-    for (auto& entity : entities) {
+    // Note that everyone are moving and eating at the same time and there might be a race where
+    //  two torefs are eating the same tarif
+    for (auto& tarif : tarifim) {
         futures.push_back(threadPool->enqueue([&]() {
-            std::vector<EntityDistanceResult> entitiesInFov = getEntitiesInFov(entity);
-            entity->maybeEat(entitiesInFov);
-            entity->acknowledgeEntities(entitiesInFov);
+            std::vector<EntityDistanceResult> entitiesInFov = getEntitiesInFov(tarif, torfim);
+            tarif->maybeEat(entitiesInFov);
+            tarif->acknowledgeEntities(entitiesInFov);
+        }));
+    }
+
+    for (auto& toref : torfim) {
+        futures.push_back(threadPool->enqueue([&]() {
+            std::vector<EntityDistanceResult> entitiesInFov = getEntitiesInFov(toref, tarifim);
+            toref->maybeEat(entitiesInFov);
+            toref->acknowledgeEntities(entitiesInFov);
         }));
     }
 
@@ -42,17 +48,30 @@ void Board::moveAll() {
     }
     futures.clear();
 
-    std::vector<EntityPtr> newEntities;
+    std::vector<TorefPtr> newTorfim;
+    std::vector<TarifPtr> newTarifim;
     std::mutex mut;
 
-    for (auto& entity : entities) {
+    for (auto& toref : torfim) {
         futures.push_back(threadPool->enqueue([&]() {
-            entity->moveInBoundries({cols, rows});
-            EntityPtr possibleEntity = entity->maybeGiveBirth();
-            if (possibleEntity) {
+            toref->moveInBoundries({cols, rows});
+            TorefPtr possibleToref = toref->maybeGiveBirth();
+            if (possibleToref) {
                 std::lock_guard<std::mutex> guard(mut);
-                std::cout << entity->idx << " gave birth to " << possibleEntity->idx << std::endl;
-                newEntities.push_back(possibleEntity);
+                std::cout << toref->idx << " gave birth to " << possibleToref->idx << std::endl;
+                newTorfim.push_back(possibleToref);
+            }
+        }));
+    }
+
+    for (auto& tarif : tarifim) {
+        futures.push_back(threadPool->enqueue([&]() {
+            tarif->moveInBoundries({cols, rows});
+            TarifPtr possibleTarif = tarif->maybeGiveBirth();
+            if (possibleTarif) {
+                std::lock_guard<std::mutex> guard(mut);
+                std::cout << tarif->idx << " gave birth to " << possibleTarif->idx << std::endl;
+                newTarifim.push_back(possibleTarif);
             }
         }));
     }
@@ -61,53 +80,26 @@ void Board::moveAll() {
         future.wait();
     }
 
-    entities.erase(
-        std::remove_if(entities.begin(), entities.end(), [] (auto ent) {
+    tarifim.erase(
+        std::remove_if(tarifim.begin(), tarifim.end(), [] (auto ent) {
             return ent->isDead();
-        }), entities.end()
+        }), tarifim.end()
     );
 
-    entities.insert(entities.end(), newEntities.begin(), newEntities.end());
+    torfim.erase(
+        std::remove_if(torfim.begin(), torfim.end(), [] (auto ent) {
+            return ent->isDead();
+        }), torfim.end()
+    );
+
+    torfim.insert(torfim.end(), newTorfim.begin(), newTorfim.end());
+    tarifim.insert(tarifim.end(), newTarifim.begin(), newTarifim.end());
     ++gen;
 }
 
-std::vector<EntityDistanceResult> Board::getEntitiesInFov(const EntityPtr& entity) {
-    Radian fovPart = entity->fieldOfView() / 2;
-    Radian fovStart = entity->angle() - fovPart;
-    Radian fovEnd = entity->angle() + fovPart;
-
-    std::vector<EntityDistanceResult> ret;
-
-    // TODO: hash with something vaguer than float
-    std::unordered_map<int, EntityDistanceResult> inSight;
-
-    for (const auto& otherEntity: entities) {
-        if (entity == otherEntity) {
-            continue;
-        }
-
-        distance_t distSquared = getDistanceSquared(entity->location(), otherEntity->location());
-        auto maxDist = entity->maxSightDistance();
-        if (distSquared > (maxDist * maxDist)) {
-            continue;
-        }
-
-        Radian angle = getAngle(entity->location(), otherEntity->location());
-        auto intAngle = angle.toIntDegrees();
-
-        if (!angle.between(fovStart, fovEnd)) {
-            continue;
-        }
-
-        auto sawEntity = inSight.find(intAngle);
-        if (sawEntity == inSight.end() || distSquared < sawEntity->second.distanceToEntity) {
-            inSight[intAngle] = {otherEntity, angle, distSquared};
-        }
-    }
-
-    for (auto& [angle, entityDist] : inSight) {
-        entityDist.distanceToEntity = sqrtf(entityDist.distanceToEntity);
-        ret.emplace_back(entityDist);
-    }
-    return ret;
+EntitiesContainer Board::getEntities() const {
+    EntitiesContainer entities;
+    entities.insert(entities.end(), tarifim.begin(), tarifim.end());
+    entities.insert(entities.end(), torfim.begin(), torfim.end());
+    return entities;
 }

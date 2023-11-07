@@ -14,28 +14,34 @@
 
 
 Up Next:
-1. implement energy                       V
+1. implement energy                              V
     a. for toref:
-        i.  if depleted -> die            V
-        ii. to gain energy -> eat         V
+        i.  if depleted -> die                   V
+        ii. to gain energy -> eat                V
 
     b. for tarif:
-        i.  if depleted -> don't move     V
-        ii. to gain energy -> wait        V
+        i.  if depleted -> don't move            V
+        ii. to gain energy -> wait               V
 
-2. implement birth mechanism              V
-    a. copy                               V
-        a. for tarif - if age > 90        V
-        b. for toref - if ate 3 entities  V
+2. implement birth mechanism                     V
+    a. copy                                      V
+        a. for tarif - if age > 90               V
+        b. for toref - if ate 3 entities         V
     b. mutate
 
 3. adjust smart evolution:
-    a. copying the net to child           V
-    b. add a mutation                     V
+    a. copying the net to child                  V
+    b. add a mutation                            V
 
 4. implement cooldown for toref after eating
 
 5. improve birth mechanism and decay
+
+6. optimization for getEntitiesInFov
+
+7. reinforcement learning
+
+8. think about how to make them smarter
 */
 
 using std::cout;
@@ -75,8 +81,8 @@ int main(int argc, char** argv) {
         speed_t speed = speed_dist(e1);
         Radian radian = radian_dist(e1);
 
-        board.addEntity(std::make_shared<Toref>(x, y, speed, radian, 2 /* radius */));
-        board.addEntity(std::make_shared<Tarif>(x, y, speed, radian, 2 /* radius */));
+        board.addToref(std::make_shared<Toref>(x, y, speed, radian, 2 /* radius */));
+        board.addTarif(std::make_shared<Tarif>(x, y, speed, radian, 2 /* radius */));
     }
 
 //    cout << "Start:" << endl;
