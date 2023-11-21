@@ -15,9 +15,9 @@ int Agent::sprite_direction() const {
 }
 
 Agent::Agent(const Entity &entity) {
-    pos_x = static_cast<int>(entity.location().x() * static_cast<float>(WINDOW_WIDTH));
-    pos_y = static_cast<int>(entity.location().y() * static_cast<float>(WINDOW_HEIGHT));
-    direction = radiansToDirection(entity.angle());
+    pos_x = static_cast<int>(entity.location.x() * static_cast<float>(WINDOW_WIDTH));
+    pos_y = static_cast<int>(entity.location.y() * static_cast<float>(WINDOW_HEIGHT));
+    direction = radiansToDirection(entity.angle);
     type = (entity.getType() == EntityType::TOREF ? Type::cat : Type::mouse);
 }
 

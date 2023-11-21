@@ -30,8 +30,8 @@ public:
     template <typename T, typename U>
     std::vector<EntityDistanceResult> getEntitiesInFov(const T& entity, std::vector<std::shared_ptr<U>> enemies) {
         Radian fovPart = entity->fieldOfView() / 2;
-        Radian fovStart = entity->angle() - fovPart;
-        Radian fovEnd = entity->angle() + fovPart;
+        Radian fovStart = entity->angle - fovPart;
+        Radian fovEnd = entity->angle + fovPart;
 
         std::vector<EntityDistanceResult> ret;
 
@@ -39,13 +39,13 @@ public:
         std::unordered_map<int, EntityDistanceResult> inSight;
 
         for (const auto& otherEntity: enemies) {
-            distance_t distSquared = getDistanceSquared(entity->location(), otherEntity->location());
+            distance_t distSquared = getDistanceSquared(entity->location, otherEntity->location);
             auto maxDist = entity->maxSightDistance();
             if (distSquared > (maxDist * maxDist)) {
                 continue;
             }
 
-            Radian angle = getAngle(entity->location(), otherEntity->location());
+            Radian angle = getAngle(entity->location, otherEntity->location);
             auto intAngle = angle.toIntDegrees();
 
             if (!angle.between(fovStart, fovEnd)) {

@@ -34,13 +34,16 @@ typedef std::shared_ptr<Entity> EntityPtr;
 typedef std::shared_ptr<Toref> TorefPtr;
 typedef std::shared_ptr<Tarif> TarifPtr;
 
+constexpr int eat_to_give_birth_threshold = 1;
+constexpr int cooldown_after_eating = 3;
+constexpr float dist_to_entity_for_eating = 0.02;
+constexpr uint32_t tarif_move_cooldown = 80;
+constexpr uint32_t tarif_birth_cooldown = 150;
+constexpr float min_energy_depletion_at_rest = 0.005;
 
 class Entity {
 private:
     static int counter;
-    Location loc;
-    speed_t speed_; // distance per frame? TBD
-    Radian angle_;
     radius_t radius;
     distance_t maxSightDistance_ = 5;
     Radian fieldOfView_ = 0.5;
@@ -54,6 +57,10 @@ protected:
 
 public:
     int idx = 0;
+    Location location;
+    speed_t speed; // distance per frame? TBD
+    Radian angle;
+
     Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t size);
     Entity() : Entity(0, 0, 0, 0, 0) {}
     Entity(const Entity& other);
@@ -62,10 +69,7 @@ public:
 
     void moveInBoundries(Location boundary);
     distance_t maxSightDistance() const { return maxSightDistance_; }
-    speed_t speed() const { return speed_; };
     // angle of an entity is considering that 0/2pie are the upper y axis, and pie/2 is the upper x axis
-    Radian angle() const { return angle_; }
-    Location location() const { return loc; }
     Radian fieldOfView() const { return fieldOfView_; }
     bool operator==(const Entity& other) const { return idx == other.idx; };
     void acknowledgeEntities(std::vector<EntityDistanceResult> entities);
@@ -92,7 +96,7 @@ struct EntityDistanceResult {
     Radian angleToEntity;
     distance_t distanceToEntity;
     std::array<float, entitySize> toRow() const { // TODO: add entity type
-        return {entity->speed(), angleToEntity.value(), distanceToEntity};
+        return {entity->speed, angleToEntity.value(), distanceToEntity};
     }
     static std::array<float, entitySize> emptyRow() { // TODO: add entity type
         return {0, 0, 0};
@@ -114,6 +118,7 @@ public:
 private:
     TorefPtr clone() const;
     uint8_t ate = 0;
+    uint8_t cooldown = 0;
 };
 
 class Tarif : public Entity {
@@ -130,7 +135,5 @@ public:
 private:
     uint32_t restForMoveIterations = 0;
     uint32_t waitForBirthIterations = 0;
-    static const uint32_t whenCanMove = 60;
-    static const uint32_t whenCanGiveBirth = 90;
     TarifPtr clone() const;
 };

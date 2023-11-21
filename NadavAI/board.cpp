@@ -30,7 +30,6 @@ void Board::moveAll() {
     for (auto& tarif : tarifim) {
         futures.push_back(threadPool->enqueue([&]() {
             std::vector<EntityDistanceResult> entitiesInFov = getEntitiesInFov(tarif, torfim);
-            tarif->maybeEat(entitiesInFov);
             tarif->acknowledgeEntities(entitiesInFov);
         }));
     }

@@ -63,8 +63,8 @@ std::vector<MatrixXf> mnist::imgFile::toMatrices() {
         MatrixXf asMat(header.rows, header.cols);
         for (int col = 0; col < header.rows; col++) {
             for (int row = 0; row < header.cols; row++) {
-                auto loc = i + col * header.cols + row;
-                const auto &pixel = pixels[loc];
+                auto location = i + col * header.cols + row;
+                const auto &pixel = pixels[location];
                 asMat(row, col) = static_cast<float>(pixel);
             }
         }

@@ -12,7 +12,7 @@
 int Entity::counter = 0;
 
 Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius) :
-        loc(x, y), speed_(speed), angle_(angle), radius(radius), idx(counter++) {
+        radius(radius), idx(counter++), location(x, y), speed(speed), angle(angle) {
 
     FlattenLayer* flatten = new FlattenLayer({entitySize, entityNum}); // TODO: verify the order of this vs acknowledgeEntities
     FCLayer* fc1 = new FCLayer(flatten->outputSize, 4);
@@ -33,8 +33,8 @@ Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius) :
 }
 
 Entity::Entity(const Entity& other) :
-    loc(other.loc), speed_(other.speed_), angle_(other.angle_), radius(other.radius),
-    brain(other.brain), idx(counter++)
+    radius(other.radius), brain(other.brain), idx(counter++),
+    location(other.location), speed(other.speed), angle(other.angle)
 { }
 
 Entity::~Entity() {
@@ -49,27 +49,27 @@ void Entity::mutate() {
 std::string Entity::toString() const {
     return std::string("{") +
             "idx: " + std::to_string(idx) +
-            ", loc: " + loc.toString() +
-            ", speed: " + std::to_string(speed_) +
-            ", angle: " + angle_.toString() +
+            ", location: " + location.toString() +
+            ", speed: " + std::to_string(speed) +
+            ", angle: " + angle.toString() +
             ", radius: " + std::to_string(radius) +
             "}";
 }
 
 void Entity::moveInBoundries(Location boundary) {
-    if (energy < speed_) {
+    if (energy < speed) {
         onEnergyDepleted();
         return;
     }
 
-    loc_t delta_x = angle_.cosine() * speed_;
-    loc_t delta_y = angle_.sine() * speed_;
+    loc_t delta_x = angle.cosine() * speed;
+    loc_t delta_y = angle.sine() * speed;
 
-    loc += {delta_x, delta_y};
-    loc += boundary; // TODO: do we need this?????
-    loc %= boundary;
+    location += {delta_x, delta_y};
+    location += boundary; // TODO: do we need this?????
+    location %= boundary;
 
-    energy -= speed_;
+    energy -= std::max(speed, min_energy_depletion_at_rest);
 }
 
 bool Entity::isActive() const {
@@ -115,9 +115,9 @@ void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
         return (n + 1) / 2;
     };
 
-    speed_ = normalize_tanh(out(0)) / 50; // TODO: normalize prettier
-    angle_ = normalize_tanh(out(1)) * 2 * M_PI;
-    // std::cout << "Net's output is speed: " << speed_ << " angle: " << angle_.value() << std::endl;
+    speed = normalize_tanh(out(0)) / 50; // TODO: normalize prettier
+    angle = normalize_tanh(out(1)) * 2 * M_PI;
+    // std::cout << "Net's output is speed: " << speed << " angle: " << angle.value() << std::endl;
 }
 
 /********** Toref *************/
@@ -127,7 +127,7 @@ Toref::Toref(const Toref& other) :
 { }
 
 TorefPtr Toref::maybeGiveBirth() {
-    if (ate > 1) {
+    if (ate > eat_to_give_birth_threshold) {
         ate = 0;
         TorefPtr child = clone();
         child->mutate();
@@ -147,18 +147,20 @@ TorefPtr Toref::clone() const {
 
 
 void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
-    if (!isActive()) { // TODO: WHY?
+    if (--cooldown > 0) {
         return;
     }
+
     for (auto& result : results) {
         if (result.entity->isDead() || result.entity->getType() == EntityType::TOREF) {
             continue;
         }
-        if (result.distanceToEntity < 0.02) { // TODO: move to const
+        if (result.distanceToEntity < dist_to_entity_for_eating) {
             std::cout << idx << ": I ate " << result.entity->idx << std::endl;
             energy = 1; // TODO: reset energy
             result.entity->die();
             ++ate;
+            cooldown = cooldown_after_eating;
         }
     }
 }
@@ -176,7 +178,7 @@ Tarif::Tarif(const Tarif& other) :
 
 void Tarif::onEnergyDepleted() {
     state = State::INACTIVE; // TODO: do we need this INACTIVE?
-    if (restForMoveIterations == whenCanMove) {
+    if (restForMoveIterations == tarif_move_cooldown) {
         state = State::ACTIVE;
         energy = 1; // TODO: make better energy
         restForMoveIterations = 0;
@@ -190,7 +192,7 @@ void Tarif::maybeEat(std::vector<EntityDistanceResult> entities) {
 }
 
 TarifPtr Tarif::maybeGiveBirth() {
-    if (waitForBirthIterations == whenCanGiveBirth) {
+    if (waitForBirthIterations == tarif_birth_cooldown) {
         waitForBirthIterations = 0;
         TarifPtr child = clone();
         child->mutate();
