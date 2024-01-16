@@ -33,9 +33,19 @@ Up Next:
     a. copying the net to child                  V
     b. add a mutation                            V
 
-4. implement cooldown for toref after eating
+4. implement cooldown for toref after eating     V
 
-5. improve birth mechanism and decay
+5. improve birth mechanism and decay <- The fu**
+
+5.5. Telemetry / Statistics:
+ a. Calculations
+ b. UI
+
+5.6. "Start Simulation" window
+ a. configuration
+ b. UI controllers
+
+5.7. UI: 2D visualization: only 'up' sprite but rotated
 
 6. optimization for getEntitiesInFov
 
