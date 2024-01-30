@@ -21,6 +21,11 @@ enum class Direction {
     right, left, up, down
 };
 
+struct DirectionAndAngle {
+    Direction direction;
+    Radian angle;
+};
+
 enum class Type {
     cat, mouse
 };
@@ -32,11 +37,11 @@ public:
 
     int pos_x;
     int pos_y;
-    Direction direction;
+    DirectionAndAngle directionAndAngle;
 
     int sprite_direction() const;
 
-    static Direction radiansToDirection(Radian angle);
+    static DirectionAndAngle radiansToDirection(Radian angle);
     Type type;
 };
 

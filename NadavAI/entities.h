@@ -36,10 +36,10 @@ typedef std::shared_ptr<Tarif> TarifPtr;
 
 constexpr int eat_to_give_birth_threshold = 1;
 constexpr int cooldown_after_eating = 3;
-constexpr float dist_to_entity_for_eating = 0.02;
+constexpr float dist_to_entity_for_eating = 0.035;
 constexpr uint32_t tarif_move_cooldown = 80;
 constexpr uint32_t tarif_birth_cooldown = 150;
-constexpr float min_energy_depletion_at_rest = 0.005;
+constexpr float min_energy_depletion_at_rest = 0.0005;
 
 class Entity {
 private:

@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 int Agent::sprite_direction() const {
-    switch (direction) {
+    switch (directionAndAngle.direction) {
         case Direction::right:
             return 96;
         case Direction::left:
@@ -17,22 +17,26 @@ int Agent::sprite_direction() const {
 Agent::Agent(const Entity &entity) {
     pos_x = static_cast<int>(entity.location.x() * static_cast<float>(WINDOW_WIDTH));
     pos_y = static_cast<int>(entity.location.y() * static_cast<float>(WINDOW_HEIGHT));
-    direction = radiansToDirection(entity.angle);
+    directionAndAngle = radiansToDirection(entity.angle);
     type = (entity.getType() == EntityType::TOREF ? Type::cat : Type::mouse);
 }
 
 
-Direction Agent::radiansToDirection(Radian angle) {
+DirectionAndAngle Agent::radiansToDirection(Radian angle) {
     if (angle.between(Radian::fromDegrees(225.0), Radian::fromDegrees(315.0))) {
-        return Direction::down;
+        auto turning = angle - Radian::fromDegrees(270.0);
+        return {Direction::down, turning};
     }
     if (angle.between(Radian::fromDegrees(315.0), Radian::fromDegrees(45.0))) {
-        return Direction::right;
+        auto turning = angle - Radian::fromDegrees(0.0);
+        return {Direction::right, turning};
     }
     if (angle.between(Radian::fromDegrees(45.0), Radian::fromDegrees(135.0))) {
-        return Direction::up;
+        auto turning = angle - Radian::fromDegrees(90.0);
+        return {Direction::up, turning};
     }
-    return Direction::left;
+    auto turning = angle - Radian::fromDegrees(180.0);
+    return {Direction::left, turning};
 }
 
 bool Visualizer::initialized = false;
@@ -93,9 +97,11 @@ void Visualizer::startVizLoop() {
                 SDL_Rect dstrect = {agent.pos_x - AGENT_SIZE / 2, agent.pos_y - AGENT_SIZE / 2, AGENT_SIZE, AGENT_SIZE};
 
                 if (agent.type == Type::cat) {
-                    SDL_RenderCopy(renderer, cats_texture, &srcrect, &dstrect);
+                    SDL_RenderCopyEx(renderer, cats_texture, &srcrect, &dstrect, agent.directionAndAngle.angle.toDegrees(), nullptr,
+                        SDL_FLIP_NONE);
                 } else {
-                    SDL_RenderCopy(renderer, mice_texture, &srcrect, &dstrect);
+                    SDL_RenderCopyEx(renderer, mice_texture, &srcrect, &dstrect, agent.directionAndAngle.angle.toDegrees(), nullptr,
+                        SDL_FLIP_NONE);
                 }
             }
             SDL_RenderPresent(renderer);
