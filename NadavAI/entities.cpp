@@ -82,7 +82,6 @@ bool Entity::isDead() const {
 
 void Entity::die() {
     state = State::DEAD;
-    std::cout << idx << ": I died" << std::endl;
 }
 
 void Entity::acknowledgeEntities(std::vector<EntityDistanceResult> results) {
@@ -156,7 +155,6 @@ void Toref::maybeEat(std::vector<EntityDistanceResult> results) {
             continue;
         }
         if (result.distanceToEntity < dist_to_entity_for_eating) {
-            std::cout << idx << ": I ate " << result.entity->idx << std::endl;
             energy = 1; // TODO: reset energy
             result.entity->die();
             ++ate;

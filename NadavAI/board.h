@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "entities.h"
 #include "misc_util/misc_util.h"
+#include "stats.h"
 
 typedef std::vector<EntityPtr> EntitiesContainer;
 typedef std::vector<TorefPtr> TorefsContainer;
@@ -23,6 +24,7 @@ public:
     void addToref(TorefPtr toref);
     void addTarif(TarifPtr tarif);
     void moveAll();
+    StatsPoint getStats() const;
     EntitiesContainer getEntities() const;
 
     uint64_t gen = 0;

@@ -1,4 +1,5 @@
 #include "visualization.h"
+#include "stats.h"
 #include <iostream>
 #include <string>
 #include <random>
@@ -30,14 +31,21 @@ void initBoard(Board &board) {
 int main(int argc, char **argv) {
     Visualizer vis;
     bool run = true;
-    std::thread thread([&vis, &run]() {
+    auto runs = 1000;
+    std::thread thread([&vis, &run, &runs]() {
+        Stats stats;
         Board board(1, 1);
         initBoard(board);
         while (run) {
             using namespace std::chrono_literals;
             board.moveAll();
             vis.updateAgentList(board);
-            std::this_thread::sleep_for(30ms);
+            stats.addPoint(board.getStats());
+//            std::this_thread::sleep_for(30ms);
+            if (runs-- == 0) {
+                stats.printLast(50);
+                exit(0);
+            }
         }
     });
     thread.detach();

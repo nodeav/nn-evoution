@@ -57,7 +57,6 @@ void Board::moveAll() {
             TorefPtr possibleToref = toref->maybeGiveBirth();
             if (possibleToref) {
                 std::lock_guard<std::mutex> guard(mut);
-                std::cout << toref->idx << " gave birth to " << possibleToref->idx << std::endl;
                 newTorfim.push_back(possibleToref);
             }
         }));
@@ -69,7 +68,6 @@ void Board::moveAll() {
             TarifPtr possibleTarif = tarif->maybeGiveBirth();
             if (possibleTarif) {
                 std::lock_guard<std::mutex> guard(mut);
-                std::cout << tarif->idx << " gave birth to " << possibleTarif->idx << std::endl;
                 newTarifim.push_back(possibleTarif);
             }
         }));
@@ -101,4 +99,12 @@ EntitiesContainer Board::getEntities() const {
     entities.insert(entities.end(), tarifim.begin(), tarifim.end());
     entities.insert(entities.end(), torfim.begin(), torfim.end());
     return entities;
+}
+
+StatsPoint Board::getStats() const {
+    return StatsPoint {
+        .torefs = static_cast<uint32_t>(torfim.size()),
+        .tarifs = static_cast<uint32_t>(tarifim.size()),
+        .frame = static_cast<uint32_t>(gen)
+    };
 }

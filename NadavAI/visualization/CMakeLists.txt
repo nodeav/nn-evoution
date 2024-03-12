@@ -11,7 +11,7 @@ add_executable(${VIZ_EXE} viz_main.cpp)
 
 include_directories(. ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
 
-target_link_libraries(${VIZ_EXE} ${VIZ_LIB} ${NAI_LIB})
+target_link_libraries(${VIZ_EXE} ${VIZ_LIB} ${NAI_LIB} ${STATS_LIB})
 target_link_libraries(${VIZ_LIB} SDL2::SDL2)
 
 # TODO: make sure this is OK

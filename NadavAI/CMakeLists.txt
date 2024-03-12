@@ -3,6 +3,7 @@ set(CMAKE_CXX_FLAGS "-Wall -pedantic")
 
 set(EXEC_NAME "NadavAI")
 set(NAI_LIB "naiLib")
+set(STATS_LIB "statsLib")
 
 option(BOARD_VIS "visualize board" ON)
 
@@ -12,11 +13,13 @@ add_library(${NAI_LIB} entities.cpp
                         board.cpp
                         utils.cpp)
 
+add_library(${STATS_LIB} stats.cpp)
+
 # include the current directory in the include path
 include_directories(. ..)
 
 target_link_libraries(${NAI_LIB} ${NeuralNetLib} misc_util)
-target_link_libraries(${EXEC_NAME} Eigen3::Eigen ${NAI_LIB})
+target_link_libraries(${EXEC_NAME} Eigen3::Eigen ${NAI_LIB} ${STATS_LIB})
 
 #Testing:
 include(FetchContent)
