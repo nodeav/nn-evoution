@@ -51,6 +51,7 @@ Visualizer::Visualizer() {
 
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
+    TTF_Init();
 
     window = SDL_CreateWindow("SDL2 Sprite Sheets", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH,
                               WINDOW_HEIGHT, 0);
@@ -72,6 +73,16 @@ void Visualizer::startVizLoop() {
     while (!quit) {
 
         SDL_SetRenderDrawColor(renderer, 168, 230, 255, 255);
+
+        auto font = TTF_OpenFont("./arial.ttf", 24);
+        auto textSurface = TTF_RenderText_Solid(font, "NOA NOA NOA NOA", SDL_Color{0,0,0,0});
+        auto textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+        // STOPPED HERE
+
+        if (!textSurface) {
+            std::cout << "TTF_RenderText_Solid failed: " << TTF_GetError() << std::endl;
+        }
 
         Uint32 ticks = SDL_GetTicks();
         Uint32 seconds = ticks / 1000;
@@ -108,9 +119,11 @@ void Visualizer::startVizLoop() {
                         SDL_FLIP_NONE);
                 }
             }
+
             SDL_SetRenderDrawColor(renderer, 90, 10, 90, 255);
             SDL_RenderFillRect(renderer, &rect);
-
+            TTF_CloseFont(font);
+            SDL_DestroyTexture(textTexture);
             SDL_RenderPresent(renderer);
         }
 
