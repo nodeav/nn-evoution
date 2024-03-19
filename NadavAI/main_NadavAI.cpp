@@ -45,7 +45,7 @@ Up Next:
  a. configuration
  b. UI controllers
 
-5.7. UI: 2D visualization: only 'up' sprite but rotated
+5.7. UI: 2D visualization: only 'up' sprite but rotated V
 
 6. optimization for getEntitiesInFov
 
