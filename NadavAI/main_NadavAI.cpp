@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 #include "board.h"
-
+// JIRA
 /* Rules :
 - entity can eat to its angle, in an ROI.
 - as an MVP, entities should be approximately round.
