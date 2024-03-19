@@ -6,7 +6,7 @@
 #include <thread>
 #include <chrono>
 
-constexpr int num_entities = 500;
+constexpr int num_entities = 100;
 
 void initBoard(Board &board) {
     std::random_device r;

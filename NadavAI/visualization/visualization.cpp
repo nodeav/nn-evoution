@@ -16,7 +16,7 @@ int Agent::sprite_direction() const {
 
 Agent::Agent(const Entity &entity) {
     pos_x = static_cast<int>(entity.location.x() * static_cast<float>(WINDOW_WIDTH));
-    pos_y = static_cast<int>(entity.location.y() * static_cast<float>(WINDOW_HEIGHT));
+    pos_y = static_cast<int>(entity.location.y() * static_cast<float>(MAIN_WINDOW_HEIGHT) + HEADER_HEIGHT);
     directionAndAngle = radiansToDirection(entity.angle);
     type = (entity.getType() == EntityType::TOREF ? Type::cat : Type::mouse);
 }
@@ -68,9 +68,11 @@ Visualizer::Visualizer() {
 
 void Visualizer::startVizLoop() {
     SDL_Event event;
+    SDL_Rect rect = {0, 0, WINDOW_WIDTH, HEADER_HEIGHT};
     while (!quit) {
 
         SDL_SetRenderDrawColor(renderer, 168, 230, 255, 255);
+
         Uint32 ticks = SDL_GetTicks();
         Uint32 seconds = ticks / 1000;
         Uint32 frames = ticks / 100;
@@ -84,13 +86,15 @@ void Visualizer::startVizLoop() {
         if (step >= frames) {
             continue;
         }
+
+        SDL_RenderClear(renderer);
+
         step = frames;
 
 
         // rendering
         Sint32 sprite = frames % SPRITE_CYCLE_LEN;
         {
-            SDL_RenderClear(renderer);
             std::lock_guard<std::mutex> l(agents_lock);
             for (const auto &agent: agents) {
                 SDL_Rect srcrect = {sprite * SPRITE_SIZE, agent.sprite_direction(), SPRITE_SIZE, SPRITE_SIZE};
@@ -104,6 +108,9 @@ void Visualizer::startVizLoop() {
                         SDL_FLIP_NONE);
                 }
             }
+            SDL_SetRenderDrawColor(renderer, 90, 10, 90, 255);
+            SDL_RenderFillRect(renderer, &rect);
+
             SDL_RenderPresent(renderer);
         }
 
