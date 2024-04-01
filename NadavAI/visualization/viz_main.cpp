@@ -5,7 +5,7 @@
 #include <thread>
 #include <chrono>
 
-constexpr int num_entities = 2000;
+constexpr int num_entities = 1000;
 
 void initBoard(Board &board) {
 #ifdef CAT_GPT_REPRODUCIBLE

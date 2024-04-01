@@ -18,13 +18,17 @@ Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius) :
         loc(x, y), speed_(speed), angle_(angle), radius(radius), idx(counter++) {
 
     FlattenLayer* flatten = new FlattenLayer({entitySize, entityNum}); // TODO: verify the order of this vs acknowledgeEntities
-    FCLayer* fc1 = new FCLayer(flatten->outputSize, 64);
-    FCLayer* fc2 = new FCLayer(fc1->outputSize, 32);
-    FCLayer* fc3 = new FCLayer(fc2->outputSize, controlSize);
+    FCLayer* fc1 = new FCLayer(flatten->outputSize, 32);
+    FCLayer* fc2 = new FCLayer(fc1->outputSize, 24);
+    FCLayer* fc3 = new FCLayer(fc2->outputSize, 24);
+    FCLayer* fc4 = new FCLayer(fc3->outputSize, 16);
+    FCLayer* fc5 = new FCLayer(fc4->outputSize, controlSize);
     auto tha0 = new THALayer();
     auto tha1 = new THALayer();
     auto tha2 = new THALayer();
     auto tha3 = new THALayer();
+    auto tha4 = new THALayer();
+    auto tha5 = new THALayer();
     brain.addLayer(flatten);
     brain.addLayer(tha0);
     brain.addLayer(fc1);
@@ -33,6 +37,10 @@ Entity::Entity(loc_t x, loc_t y, speed_t speed, Radian angle, radius_t radius) :
     brain.addLayer(tha2);
     brain.addLayer(fc3);
     brain.addLayer(tha3);
+    brain.addLayer(fc4);
+    brain.addLayer(tha4);
+    brain.addLayer(fc5);
+    brain.addLayer(tha5);
 }
 
 Entity::Entity(const Entity& other) :
