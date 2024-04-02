@@ -64,25 +64,18 @@ Visualizer::Visualizer() {
     mice_image = IMG_Load("./mice-fluffy.png");
     mice_texture = SDL_CreateTextureFromSurface(renderer, mice_image);
 
+    font = TTF_OpenFont("./arial.ttf", 24);
+
     SDL_RenderClear(renderer);
 }
 
 void Visualizer::startVizLoop() {
     SDL_Event event;
     SDL_Rect rect = {0, 0, WINDOW_WIDTH, HEADER_HEIGHT};
+
     while (!quit) {
 
         SDL_SetRenderDrawColor(renderer, 168, 230, 255, 255);
-
-        auto font = TTF_OpenFont("./arial.ttf", 24);
-        auto textSurface = TTF_RenderText_Solid(font, "NOA NOA NOA NOA", SDL_Color{0,0,0,0});
-        auto textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-
-        // STOPPED HERE
-
-        if (!textSurface) {
-            std::cout << "TTF_RenderText_Solid failed: " << TTF_GetError() << std::endl;
-        }
 
         Uint32 ticks = SDL_GetTicks();
         Uint32 seconds = ticks / 1000;
@@ -98,15 +91,22 @@ void Visualizer::startVizLoop() {
             continue;
         }
 
+        auto statsText =
+                "Frame: " + std::to_string(stats.frame) + ", Torefs: " + std::to_string(stats.torefs)
+                + ", Tarifs: " + std::to_string(stats.tarifs);
+
+        auto statsTextCStr = statsText.c_str();
+        auto textSurface = TTF_RenderText_Solid(font, statsTextCStr, SDL_Color{0, 0, 0, 0});
+        auto textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
         SDL_RenderClear(renderer);
 
         step = frames;
 
-
         // rendering
         Sint32 sprite = frames % SPRITE_CYCLE_LEN;
         {
-            std::lock_guard<std::mutex> l(agents_lock);
+//            std::lock_guard<std::mutex> l(agents_lock);
             for (const auto &agent: agents) {
                 SDL_Rect srcrect = {sprite * SPRITE_SIZE, agent.sprite_direction(), SPRITE_SIZE, SPRITE_SIZE};
                 SDL_Rect dstrect = {agent.pos_x - AGENT_SIZE / 2, agent.pos_y - AGENT_SIZE / 2, AGENT_SIZE, AGENT_SIZE};
@@ -122,7 +122,11 @@ void Visualizer::startVizLoop() {
 
             SDL_SetRenderDrawColor(renderer, 90, 10, 90, 255);
             SDL_RenderFillRect(renderer, &rect);
-            TTF_CloseFont(font);
+
+            SDL_Rect destR = {4, 4, 0, 0};
+            TTF_SizeText(font, statsTextCStr, &destR.w, &destR.h);
+            SDL_RenderCopy(renderer, textTexture, nullptr, &destR);
+
             SDL_DestroyTexture(textTexture);
             SDL_RenderPresent(renderer);
         }
@@ -151,12 +155,12 @@ Visualizer::~Visualizer() {
     SDL_FreeSurface(mice_image);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_CloseFont(font);
     IMG_Quit();
     SDL_Quit();
 }
 
 void Visualizer::updateAgentList(const Board &board) {
-    std::lock_guard<std::mutex> l(agents_lock);
     agents.clear();
     for (const auto &entity: board.getEntities()) {
         agents.emplace_back(*entity);
@@ -171,4 +175,8 @@ void Visualizer::registerCleanupSignalHandler() {
     SignalHandler::init([&](int) {
        stopVizLoop();
     });
+}
+
+void Visualizer::updateStats(const StatsPoint &_stats) {
+    stats = _stats;
 }

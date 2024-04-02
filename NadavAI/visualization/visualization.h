@@ -61,18 +61,20 @@ class Visualizer {
     SDL_Texture *mice_texture;
     std::vector<Agent> agents;
     static bool initialized;
-    std::mutex agents_lock;
-
+    TTF_Font *font;
     void registerCleanupSignalHandler();
+    StatsPoint stats;
 public:
     Visualizer();
 
     ~Visualizer();
 
     void updateAgentList(const Board &board);
+    void updateStats(const StatsPoint &stats);
 
     void startVizLoop();
     void stopVizLoop();
+
 };
 
 // TODO: move to util

@@ -6,7 +6,7 @@
 #include <thread>
 #include <chrono>
 
-constexpr int num_entities = 100;
+constexpr int num_entities = 1000;
 
 void initBoard(Board &board) {
     std::random_device r;
@@ -31,7 +31,7 @@ void initBoard(Board &board) {
 int main(int argc, char **argv) {
     Visualizer vis;
     bool run = true;
-    auto runs = 1000;
+    auto runs = 100000000;
     std::thread thread([&vis, &run, &runs]() {
         Stats stats;
         Board board(1, 1);
@@ -39,8 +39,10 @@ int main(int argc, char **argv) {
         while (run) {
             using namespace std::chrono_literals;
             board.moveAll();
+            auto statsPoint = board.getStats();
+            stats.addPoint(statsPoint);
             vis.updateAgentList(board);
-            stats.addPoint(board.getStats());
+            vis.updateStats(statsPoint);
 //            std::this_thread::sleep_for(30ms);
             if (runs-- == 0) {
                 stats.printLast(50);
